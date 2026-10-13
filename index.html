@@ -1,0 +1,1129 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CMNH Franchise Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600&family=Sarabun:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky brand bar + scrollable tab strip, single content column (max 1120px), modal sheet for forms */
+:root{
+  --bg:#f2f5f4; --surface:#ffffff; --surface-2:#f7f9f8; --ink:#11302f; --muted:#5a7370; --line:#d8e2e0;
+  --teal:#0e4a4c; --on-teal:#ffffff; --teal-soft:#e1edeb; --gold:#a8812f; --gold-soft:#f4ead3;
+  --ok:#2c7a4c; --ok-soft:#e1f1e6; --warn:#9a6512; --warn-soft:#f8ecd6; --bad:#ad3f35; --bad-soft:#f7e2df;
+  --shadow:0 1px 2px rgba(14,74,76,.06),0 6px 20px rgba(14,74,76,.06);
+  --f-display:"Prompt","Sarabun",system-ui,sans-serif; --f-body:"Sarabun",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1716; --surface:#11211f; --surface-2:#152826; --ink:#e4eeec; --muted:#91a9a5; --line:#24393a;
+  --teal:#6dbcb4; --on-teal:#0b1716; --teal-soft:#16332f; --gold:#d9b46a; --gold-soft:#2c2615;
+  --ok:#62c48f; --ok-soft:#14301f; --warn:#e3ab5c; --warn-soft:#30250f; --bad:#e8857a; --bad-soft:#341a17;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1716; --surface:#11211f; --surface-2:#152826; --ink:#e4eeec; --muted:#91a9a5; --line:#24393a;
+  --teal:#6dbcb4; --on-teal:#0b1716; --teal-soft:#16332f; --gold:#d9b46a; --gold-soft:#2c2615;
+  --ok:#62c48f; --ok-soft:#14301f; --warn:#e3ab5c; --warn-soft:#30250f; --bad:#e8857a; --bad-soft:#341a17;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--f-body)}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.3;margin:0;text-wrap:balance}
+h1{font-size:1.5rem} h2{font-size:1.2rem} h3{font-size:1.02rem}
+p{margin:0}
+a{color:var(--teal)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:.875rem}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:16px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--teal);color:var(--on-teal)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.mark{width:34px;height:34px;border-radius:9px;background:var(--gold);color:#fff;display:grid;place-items:center;font:600 .8rem var(--f-display);flex:none}
+.brand b{font-family:var(--f-display);font-weight:600;display:block;line-height:1.2}
+.brand span{font-size:.8rem;opacity:.8;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .sp{flex:1}
+.top .ghost{background:transparent;border:1px solid currentColor;color:inherit;opacity:.85}
+.tabs{background:var(--surface);border-bottom:1px solid var(--line)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tab{border:0;background:none;padding:12px 14px;white-space:nowrap;color:var(--muted);font-weight:600;border-bottom:3px solid transparent;cursor:pointer}
+.tab[aria-current="true"]{color:var(--teal);border-bottom-color:var(--gold)}
+.demo{background:var(--gold-soft);color:var(--ink);font-size:.875rem}
+.demo .wrap{padding-block:6px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+main{padding-block:22px 60px}
+.head{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}
+.head p{margin-top:2px}
+
+/* controls */
+.btn{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:9px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--teal)}
+.btn.pri{background:var(--teal);border-color:var(--teal);color:var(--on-teal)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
+.btn.sm{padding:4px 10px;font-size:.85rem}
+.btn{white-space:nowrap}
+.btn.danger{color:var(--bad)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+label.f{display:grid;gap:4px;font-size:.9rem;font-weight:600;min-width:0}
+input[type=text],input[type=date],input[type=number],input[type=password],input[type=url],select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-weight:400}
+textarea{min-height:84px;resize:vertical}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* surfaces */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0}
+.panel>.ph{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.panel>.pb{padding:6px 16px 14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.kpi .v{font:600 1.7rem/1.2 var(--f-display);font-variant-numeric:tabular-nums;margin-top:4px}
+.kpi .l{font-size:.85rem;color:var(--muted);font-weight:600}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start}
+.list>*{padding:12px 0;border-bottom:1px solid var(--line)}
+.list>*:last-child{border-bottom:0}
+.li{display:flex;gap:12px;align-items:center;justify-content:space-between;cursor:default}
+.li.click{cursor:pointer}
+.li .t{font-weight:600}
+.li>div{min-width:0}
+.li>div:first-child{flex:1}
+.empty{padding:20px 0;color:var(--muted);text-align:center}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:1px 10px;font-size:.8rem;font-weight:600;white-space:nowrap;background:var(--teal-soft);color:var(--teal)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.gold{background:var(--gold-soft);color:var(--gold)} .chip.mute{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.nodot::before{display:none}
+
+/* bars */
+.bar{height:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--teal);border-radius:99px}
+.bar.gold>i{background:var(--gold)}
+
+/* benefits */
+.bens{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.ben{display:grid;grid-template-columns:34px 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;min-width:0}
+.ben .n{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;font:600 .85rem var(--f-display)}
+.ben .t{font-weight:700;line-height:1.35}
+.ben .s{font-size:.85rem;color:var(--muted);margin-top:2px}
+.ben .ctl{margin-top:10px;display:grid;gap:8px}
+.subs{display:grid;gap:4px;font-size:.9rem}
+.subs label{display:flex;gap:8px;align-items:center}
+
+/* contract strip */
+.contract{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;align-items:end}
+.contract .l{font-size:.8rem;color:var(--muted);font-weight:600}
+.contract .v{font:600 1.05rem var(--f-display)}
+.pkgtag{font-family:var(--f-display);font-weight:600;color:var(--gold)}
+
+/* tables */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.78rem;letter-spacing:.03em;color:var(--muted);font-weight:700;white-space:nowrap}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--surface-2)}
+
+/* audit form */
+.acat{border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.acat h3{padding:10px 14px;background:var(--teal-soft);color:var(--teal);display:flex;justify-content:space-between}
+.aitem{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:10px 14px;border-top:1px solid var(--line);align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg label{padding:4px 10px;font-size:.85rem;cursor:pointer;border-left:1px solid var(--line)}
+.seg label:first-child{border-left:0}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--teal);color:var(--on-teal)}
+.seg label:has(input:focus-visible){outline:2px solid var(--gold)}
+.aitem input[type=text]{grid-column:1/-1;font-size:.9rem;padding:6px 10px}
+.score{font:600 2.2rem/1 var(--f-display);font-variant-numeric:tabular-nums}
+
+/* thread */
+.msg{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface-2)}
+.msg.hq{background:var(--teal-soft);border-color:transparent}
+.msg .who{font-size:.8rem;font-weight:700;color:var(--muted)}
+
+/* login */
+.login{min-height:100%;display:grid;place-items:center;padding:32px 16px}
+.login .box{max-width:860px;width:100%;display:grid;gap:18px}
+.login .hero{text-align:center;display:grid;gap:6px;justify-items:center}
+.login .hero .mark{width:54px;height:54px;font-size:1.1rem;border-radius:14px}
+.login .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.login .card{display:grid;gap:12px;padding:20px}
+.login .eyebrow{font-size:.75rem;letter-spacing:.08em;font-weight:700;color:var(--gold);text-transform:uppercase}
+.err{color:var(--bad);font-size:.9rem;min-height:1.2em}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(6,20,19,.5);z-index:50;display:grid;place-items:center;padding:16px}
+.sheet{background:var(--surface);color:var(--ink);border-radius:16px;width:min(760px,100%);max-height:calc(100% - 32px);overflow:auto;box-shadow:var(--shadow)}
+.sheet .sh{position:sticky;top:0;background:var(--surface);padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:1}
+.sheet .sb{padding:16px 18px;display:grid;gap:14px}
+.sheet .sf{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;position:sticky;bottom:0;background:var(--surface)}
+.x{border:0;background:none;font-size:1.4rem;line-height:1;cursor:pointer;color:var(--muted);padding:4px 8px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:60;font-weight:600;max-width:calc(100% - 32px)}
+.pkgcard{display:grid;gap:12px}
+.pkgcard .price{font:600 1.8rem var(--f-display);color:var(--teal)}
+.pkgcard ol{margin:0;padding-left:1.3em;display:grid;gap:4px}
+/* =========================================================
+   SKEUOMORPHISM — teal leather + gold stitching, paper stock,
+   glossy embossed controls, recessed fields, brushed-metal tray
+   ========================================================= */
+:root{
+  --bg:#e8e3d6; --bg2:#d9d2c0; --surface:#fcf9f2; --surface-2:#f0eadc; --edge:#cbc1aa; --line:#d8cfbb;
+  --ink:#1e2b28; --muted:#6b6553;
+  --hi:rgba(255,255,255,.9); --sh:rgba(62,46,18,.20); --groove:#d6cebb;
+  --teal-hi:#23797b; --teal-lo:#0a3b3d; --gold-hi:#eed392; --gold-lo:#956b22;
+  --metal1:#f5f5f2; --metal2:#c9ccc6; --note:#fbefb8; --note2:#f3dd86;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1815; --bg2:#100e0c; --surface:#2b2723; --surface-2:#221f1b; --edge:#433c34; --line:#3b352e;
+  --ink:#eee7d8; --muted:#aba18d;
+  --hi:rgba(255,255,255,.08); --sh:rgba(0,0,0,.6); --groove:#141210;
+  --teal-hi:#2a8280; --teal-lo:#0b3433; --gold-hi:#e4c27a; --gold-lo:#7f5c1d;
+  --metal1:#3c3a35; --metal2:#211f1c; --note:#4a4020; --note2:#3a3218; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1815; --bg2:#100e0c; --surface:#2b2723; --surface-2:#221f1b; --edge:#433c34; --line:#3b352e;
+  --ink:#eee7d8; --muted:#aba18d;
+  --hi:rgba(255,255,255,.08); --sh:rgba(0,0,0,.6); --groove:#141210;
+  --teal-hi:#2a8280; --teal-lo:#0b3433; --gold-hi:#e4c27a; --gold-lo:#7f5c1d;
+  --metal1:#3c3a35; --metal2:#211f1c; --note:#4a4020; --note2:#3a3218; color-scheme:dark}
+
+body{background:var(--grain),radial-gradient(120% 80% at 50% 0%,var(--bg),var(--bg2));background-color:var(--bg);min-height:100vh}
+h1,h2{text-shadow:0 1px 0 var(--hi)}
+.kpi .v,.score,.pkgcard .price{text-shadow:0 1px 0 var(--hi),0 -1px 0 rgba(0,0,0,.08)}
+
+/* leather header with gold stitching */
+.top{background:var(--grain),linear-gradient(180deg,var(--teal-hi),var(--teal-lo));color:#f5efe0;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 3px 8px rgba(0,0,0,.28)}
+.top::after{content:"";position:absolute;left:10px;right:10px;bottom:5px;border-bottom:1.5px dashed rgba(238,211,146,.6);pointer-events:none}
+.top::before{content:"";position:absolute;left:10px;right:10px;top:5px;border-top:1.5px dashed rgba(238,211,146,.35);pointer-events:none}
+.brand b{text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+.top .ghost{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.12));border:1px solid rgba(0,0,0,.35);color:#f5efe0;opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 1px 1px rgba(0,0,0,.3);text-shadow:0 -1px 0 rgba(0,0,0,.4)}
+
+/* embossed gold coins */
+.mark,.ben .n{background:radial-gradient(circle at 35% 30%,var(--gold-hi),#c99a42 55%,var(--gold-lo));color:#4a3208;text-shadow:0 1px 0 rgba(255,255,255,.45);box-shadow:inset 0 1px 1px rgba(255,255,255,.7),inset 0 -2px 3px rgba(0,0,0,.25),0 2px 3px rgba(0,0,0,.3);border:1px solid #7a571a}
+
+/* folder tabs */
+.tabs{background:linear-gradient(180deg,var(--surface-2),var(--groove));border-bottom:1px solid var(--edge);box-shadow:inset 0 -2px 3px var(--sh)}
+.tabs .wrap{gap:2px;padding-top:8px}
+.tab{border:1px solid var(--edge);border-bottom:0;border-radius:10px 10px 0 0;background:linear-gradient(180deg,var(--surface-2),var(--groove));padding:9px 16px;box-shadow:inset 0 1px 0 var(--hi)}
+.tab[aria-current="true"]{background:var(--surface);color:var(--teal);border-bottom-color:transparent;position:relative;top:1px;box-shadow:inset 0 1px 0 var(--hi),0 -2px 4px var(--sh)}
+
+/* sticky-note demo strip */
+.demo{background:linear-gradient(180deg,var(--note),var(--note2));box-shadow:inset 0 -1px 0 rgba(0,0,0,.12),0 2px 4px var(--sh)}
+
+/* paper card stock */
+.card,.panel,.ben,.acat{background:var(--grain),linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi),0 1px 1px var(--sh),0 6px 14px -4px var(--sh)}
+.panel>.ph{background:linear-gradient(180deg,var(--surface-2),var(--groove));border-bottom:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi),0 1px 0 var(--hi);border-radius:var(--r) var(--r) 0 0}
+.list>*,.mcard{border-bottom:1px solid var(--line);box-shadow:0 1px 0 var(--hi)}
+.li.click:hover,.mcard:hover{background:linear-gradient(90deg,transparent,var(--surface-2),transparent)}
+
+/* glossy beveled buttons */
+.btn{background:linear-gradient(180deg,var(--surface),var(--groove));border:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi),0 1px 2px var(--sh);text-shadow:0 1px 0 var(--hi);transition:transform .06s}
+.btn:hover{border-color:var(--gold-lo)}
+.btn:active:not([disabled]){transform:translateY(1px);box-shadow:inset 0 2px 4px var(--sh)}
+.btn.pri{background:linear-gradient(180deg,var(--teal-hi),var(--teal-lo));border-color:#062829;color:#fbf6ea;text-shadow:0 -1px 0 rgba(0,0,0,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 3px rgba(0,0,0,.3)}
+.btn.gold{background:linear-gradient(180deg,var(--gold-hi),#c39235 55%,var(--gold-lo));border-color:#6e4e14;color:#3a2605;text-shadow:0 1px 0 rgba(255,255,255,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 2px 3px rgba(0,0,0,.3)}
+.btn.danger{color:var(--bad)}
+
+/* recessed fields */
+input[type=text],input[type=date],input[type=number],input[type=password],input[type=url],select,textarea{background:linear-gradient(180deg,var(--groove),var(--surface) 40%);border:1px solid var(--edge);box-shadow:inset 0 2px 3px var(--sh),0 1px 0 var(--hi)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold-lo);box-shadow:inset 0 2px 3px var(--sh),0 0 0 3px rgba(201,154,66,.3)}
+
+/* grooves + glossy fill */
+.bar{height:11px;background:var(--groove);border:1px solid var(--edge);box-shadow:inset 0 2px 3px var(--sh),0 1px 0 var(--hi)}
+.bar>i{background:linear-gradient(180deg,#4fa5a2,var(--teal-hi) 45%,var(--teal-lo));box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+.bar.gold>i{background:linear-gradient(180deg,var(--gold-hi),#c39235 50%,var(--gold-lo))}
+
+/* enamel badges */
+.chip{border:1px solid rgba(0,0,0,.12);box-shadow:inset 0 1px 0 var(--hi),0 1px 1px var(--sh);background-image:linear-gradient(180deg,rgba(255,255,255,.35),rgba(0,0,0,.04))}
+.chip::before{box-shadow:0 0 4px currentColor}
+
+/* physical toggle for audit scoring */
+.seg{background:var(--groove);border:1px solid var(--edge);border-radius:10px;padding:3px;gap:3px;box-shadow:inset 0 2px 4px var(--sh),0 1px 0 var(--hi)}
+.seg label{border:0;border-radius:7px;color:var(--muted)}
+.seg label:has(input:checked){background:linear-gradient(180deg,var(--teal-hi),var(--teal-lo));color:#fbf6ea;text-shadow:0 -1px 0 rgba(0,0,0,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 3px rgba(0,0,0,.3)}
+.seg label:last-child:has(input:checked){background:linear-gradient(180deg,#d4685d,#8c2c24)}
+.seg label:nth-child(2):has(input:checked){background:linear-gradient(180deg,#e2ae58,#94621a)}
+
+/* label-maker tape headings */
+.acat{overflow:hidden}
+.acat h3{background:var(--grain),linear-gradient(180deg,var(--teal-hi),var(--teal-lo));color:#f5efe0;letter-spacing:.04em;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+.aitem{border-top:1px solid var(--line);box-shadow:inset 0 1px 0 var(--hi)}
+
+/* thread as paper notes */
+.msg{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--edge);box-shadow:0 1px 2px var(--sh)}
+.msg.hq{background:linear-gradient(180deg,var(--note),var(--note2));border-color:rgba(0,0,0,.1);transform:rotate(-.3deg)}
+
+/* clipboard modal */
+.overlay{background:rgba(10,8,5,.55);backdrop-filter:blur(2px)}
+.sheet{background:var(--grain),linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--edge);box-shadow:0 20px 40px rgba(0,0,0,.4),inset 0 1px 0 var(--hi)}
+.sheet .sh{background:linear-gradient(180deg,var(--metal1),var(--metal2));border-bottom:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi),0 2px 4px var(--sh)}
+.sheet .sf{background:linear-gradient(180deg,var(--surface-2),var(--groove));border-top:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi)}
+
+/* login: two stitched ID cards */
+.login .card{position:relative}
+.login .card::after{content:"";position:absolute;inset:7px;border:1.5px dashed var(--edge);border-radius:8px;pointer-events:none}
+.login .card[data-form="login-admin"]{background:var(--grain),linear-gradient(180deg,var(--teal-hi),var(--teal-lo));color:#f5efe0;border-color:#062829}
+.login .card[data-form="login-admin"]::after{border-color:rgba(238,211,146,.55)}
+.login .card[data-form="login-admin"] h2{text-shadow:0 -1px 0 rgba(0,0,0,.4)}
+.login .card[data-form="login-admin"] .muted,.login .card[data-form="login-admin"] .eyebrow{color:var(--gold-hi)}
+.login .card[data-form="login-admin"] .btn.pri{background:linear-gradient(180deg,var(--gold-hi),#c39235 55%,var(--gold-lo));color:#3a2605;text-shadow:0 1px 0 rgba(255,255,255,.4);border-color:#6e4e14}
+.login .card[data-form="login-admin"] input{color:var(--ink)}
+.login .card>*{position:relative;z-index:1}
+.toast{background:linear-gradient(180deg,#3a3630,#1c1a17);color:#f5efe0;border:1px solid #000;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 6px 16px rgba(0,0,0,.4)}
+
+/* mobile: bottom nav, card lists instead of tables, compact tiles */
+.bnav{display:none}
+.only-mob{display:none}
+.mcard{display:grid;gap:6px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.mcard:last-child{border-bottom:0}
+.mcard .top2{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.mcard .t{font-weight:700}
+.ico{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.morelist{display:grid;gap:8px}
+.morelist .btn{justify-content:flex-start;padding:12px 14px}
+@media (max-width:720px){
+  .tabs{display:none}
+  .only-desk{display:none}
+  .only-mob{display:block}
+  .bnav{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))}
+  .bnav button{border:0;background:none;display:grid;justify-items:center;gap:1px;padding:6px 2px;font-size:.72rem;font-weight:600;color:var(--muted);cursor:pointer;position:relative;min-height:52px}
+  .bnav button[aria-current="true"]{color:var(--teal)}
+  .bnav button[aria-current="true"] .ico{stroke-width:2.3}
+  .bnav .dot{position:absolute;top:4px;left:calc(50% + 6px);background:var(--warn);color:#fff;border-radius:99px;font-size:.65rem;padding:0 5px;line-height:1.5}
+  main{padding-block:16px calc(90px + env(safe-area-inset-bottom,0px))}
+  .kpis{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi{padding:12px}
+  .kpi .v{font-size:1.3rem}
+  .contract{grid-template-columns:1fr 1fr}
+  .contract>div:last-child{grid-column:1/-1}
+  .kpis>:last-child:nth-child(odd){grid-column:1/-1}
+  .demo .wrap{padding-block:4px;font-size:.8rem}
+  .demo .why{display:none}
+  .head .btn.pri,.head .btn.gold{padding:7px 12px}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .sheet{max-height:calc(100% - 16px)}
+  .overlay{padding:8px;align-items:end}
+  .bens{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .bnav{background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,rgba(0,0,0,.03) 1px 3px),linear-gradient(180deg,var(--metal1),var(--metal2));border-top:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi),0 -3px 10px var(--sh);gap:4px;padding-inline:6px}
+  .bnav button{border-radius:10px;text-shadow:0 1px 0 var(--hi)}
+  .bnav button[aria-current="true"]{background:linear-gradient(180deg,var(--groove),var(--surface-2));box-shadow:inset 0 2px 5px var(--sh),0 1px 0 var(--hi)}
+  .bnav .dot{background:radial-gradient(circle at 40% 30%,#f0b05a,#b5650f);border:1px solid #7a430a;box-shadow:0 1px 2px rgba(0,0,0,.35)}
+  .msg.hq{transform:none}
+}
+@media (max-width:560px){.payrow{flex-direction:column;align-items:flex-start}.payrow>.row{justify-content:flex-start}h1{font-size:1.3rem}.brand span{display:none}.aitem{grid-template-columns:1fr}.top .ghost{padding:4px 8px;font-size:.8rem}}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(12px);opacity:.6}}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal" class="overlay" hidden></div>
+<div id="toast" class="toast" hidden></div>
+<script>
+/* =========================================================
+   CMNH Franchise Portal
+   ใส่ URL ของ Google Apps Script Web App ที่ API_URL
+   ถ้าเว้นว่าง ระบบจะทำงานแบบ "โหมดทดลอง" ด้วยข้อมูลตัวอย่างในเบราว์เซอร์
+   ========================================================= */
+const CONFIG = { API_URL: '' };
+
+/* ---------- แพ็กเกจและสิทธิประโยชน์ ---------- */
+const PKG = {
+  RB:{code:'RB',name:'Re-Branding',full:'แพ็กเกจ Re-Branding Nursing Home Care',price:450000,renew:150000,months:12,beds:null,benefits:[
+    {key:'ops',title:'วางระบบบริหารงานในสถานประกอบการ',sub:'Operating Management',type:'deliver'},
+    {key:'staff',title:'จัดหาบุคลากรที่มีมาตรฐานจากศูนย์บริบาล',sub:'ผู้ช่วยพยาบาล PN และ NA โดยมีใบอนุญาต สพส 14',type:'count',src:'tickets:staff'},
+    {key:'train',title:'ฝึกอบรมและพัฒนาทักษะบุคลากร (UP-Skill)',sub:'อบรม ณ สาขา 4 ครั้งต่อปี',type:'quota',max:4,src:'trainings'},
+    {key:'careplan',title:'โปรแกรมรักษาดูแลผู้ป่วย',sub:'Nursing Care Plan',type:'deliver'},
+    {key:'stock',title:'บริหารระบบคลังและสต็อก',sub:'Stock Management',type:'deliver'},
+    {key:'mkt',title:'วางภาพลักษณ์การตลาดและการประชาสัมพันธ์',sub:'',type:'deliver'},
+    {key:'center',title:'ระบบ Center ดูแลลูกค้า',sub:'ประเมินราคาก่อนการใช้บริการ',type:'deliver'},
+    {key:'docs',title:'เอกสารและแบบฟอร์ม',sub:'สำหรับใช้ในการดำเนินธุรกิจ',type:'deliver'},
+    {key:'legal',title:'ที่ปรึกษาทางกฎหมาย',sub:'กรณีเกิดข้อพิพาททางกฎหมายในสถานประกอบการ ไม่เกิน 4 กรณีต่อปี',type:'quota',max:4,src:'tickets:dispute'},
+    {key:'audit',title:'ตรวจสอบคุณภาพภายใน (Internal Audit)',sub:'ด้านบริการ บริบาล และบริหาร 2 ครั้งต่อปี',type:'quota',max:2,src:'audits'},
+    {key:'online',title:'จัดทำแพลตฟอร์มออนไลน์',sub:'',type:'deliver',subs:['Website','Facebook Page Official','LINE Official','Google Business Profile']}
+  ]},
+  BB:{code:'BB',name:'Build-Branding',full:'แพ็กเกจ Build-Branding Nursing Home Care',price:750000,renew:250000,months:12,beds:30,benefits:[
+    {key:'ops',title:'วางระบบบริหารงานในสถานประกอบการ',sub:'Operating Management',type:'deliver'},
+    {key:'staff',title:'จัดหาบุคลากรที่มีมาตรฐานจากศูนย์บริบาล',sub:'ผู้ช่วยพยาบาล PN และ NA โดยมีใบอนุญาต สพส 14',type:'count',src:'tickets:staff'},
+    {key:'train',title:'ฝึกอบรมบุคลากร (UP-Skill)',sub:'อบรม ณ สาขา 6 ครั้งต่อปี',type:'quota',max:6,src:'trainings'},
+    {key:'careplan',title:'โปรแกรมรักษาดูแลผู้ป่วย',sub:'Nursing Care Plan',type:'deliver'},
+    {key:'stock',title:'บริหารระบบสต็อก',sub:'Stock Management',type:'deliver'},
+    {key:'mkt',title:'วางภาพลักษณ์การตลาดและการประชาสัมพันธ์',sub:'',type:'deliver'},
+    {key:'center',title:'ระบบ Center ดูแลลูกค้า',sub:'ประเมินราคาก่อนการใช้บริการ',type:'deliver'},
+    {key:'docs',title:'เอกสารและแบบฟอร์ม',sub:'สำหรับใช้ในการดำเนินธุรกิจ',type:'deliver'},
+    {key:'legal',title:'ที่ปรึกษาทางกฎหมายในสถานประกอบการ',sub:'ที่ปรึกษาประจำ ตรวจสัญญา ใบอนุญาต และเอกสารของสาขา',type:'count',src:'tickets:legal'},
+    {key:'audit',title:'ตรวจสอบคุณภาพภายใน (Internal Audit)',sub:'ด้านบริการ บริบาล และบริหาร 4 ครั้งต่อปี',type:'quota',max:4,src:'audits'},
+    {key:'biz',title:'ที่ปรึกษาทางธุรกิจ',sub:'ตลอดอายุสัญญา',type:'count',src:'tickets:biz'},
+    {key:'legal2',title:'ที่ปรึกษาทางกฎหมาย',sub:'กรณีเกิดข้อพิพาททางกฎหมาย ไม่เกิน 4 กรณีต่อปี',type:'quota',max:4,src:'tickets:dispute'},
+    {key:'visit',title:'Site Visit 20 ครั้ง',sub:'ตลอดอายุสัญญา',type:'quota',max:20,src:'logs'},
+    {key:'dcp',title:'Digital Elderly Care Platform',sub:'ระบบบันทึกข้อมูลการดูแล สำหรับผู้ดูแลและผู้ประกอบการ ฟรีตลอดอายุสัญญา',type:'deliver'},
+    {key:'online',title:'จัดทำแพลตฟอร์มออนไลน์',sub:'',type:'deliver',subs:['Website','Facebook Page Official','LINE Official','Google Business Profile']}
+  ]}
+};
+const AUDIT_NOTE = 'เงื่อนไขการตรวจคุณภาพ: ไม่รวมค่าเดินทางและค่าที่พัก 3 วัน 2 คืน';
+const DELIVER = ['ยังไม่เริ่ม','กำลังดำเนินการ','ส่งมอบแล้ว'];
+const TTYPES = {
+  staff:{label:'ขอบุคลากร PN/NA'}, legal:{label:'ปรึกษากฎหมาย / ตรวจเอกสาร',pkg:'BB'}, dispute:{label:'ข้อพิพาททางกฎหมาย'}, biz:{label:'ปรึกษาธุรกิจ',pkg:'BB'},
+  visit:{label:'นัด Site Visit',pkg:'BB'}, doc:{label:'ขอเอกสาร/แบบฟอร์ม'}, issue:{label:'แจ้งปัญหาอื่นๆ'}
+};
+const TSTATUS = {new:['รอรับเรื่อง','warn'],doing:['กำลังดำเนินการ',''],done:['เสร็จสิ้น','ok']};
+const GROUPS = ['ผู้ประกอบการ','ผู้จัดการ','ผู้ช่วยพยาบาล','เจ้าหน้าที่ประจำศูนย์','แม่บ้าน','แม่ครัว'];
+const DOC_CATS = ["คู่มือการดำเนินงาน (SOP)", "แบบฟอร์มบริบาล", "งานลูกค้าและ Center", "แบบฟอร์มบริหาร", "บริหารบุคลากร", "คุณภาพและ Audit", "สัญญาและกฎหมาย", "การตลาด"];
+const AUDIT = [
+  {cat:'svc',label:'ด้านบริการ',items:['ความสะอาดพื้นที่ส่วนกลางและห้องพัก','การต้อนรับและการสื่อสารกับญาติ','อาหารตรงตามแผนโภชนาการ','ความปลอดภัย ราวจับ ทางลาด และกริ่งเรียก','ระบบประเมินราคาก่อนใช้บริการ','การรับและจัดการข้อร้องเรียน']},
+  {cat:'care',label:'ด้านบริบาล',items:['Nursing Care Plan ครบทุกราย','บันทึกสัญญาณชีพและ ADL สม่ำเสมอ','การให้ยาตรงเวลาและมีบันทึก','การป้องกันแผลกดทับและการพลัดตกหกล้ม','การดูแลผู้ป่วยใส่สาย NG / Foley','สัดส่วนผู้ดูแลต่อผู้รับบริการเหมาะสม']},
+  {cat:'mgt',label:'ด้านบริหาร',items:['ใบอนุญาตสถานประกอบการและ สพส 14 ของบุคลากร','ตารางเวรและการลงเวลาปฏิบัติงาน','ระบบคลังและสต็อกเป็นปัจจุบัน','เอกสาร สัญญา และแบบฟอร์มครบถ้วน','แผนอบรมบุคลากรประจำปี','ช่องทางออนไลน์มีข้อมูลเป็นปัจจุบัน']}
+];
+const SCORE_LBL = ['ไม่ผ่าน','ปรับปรุง','ผ่าน'];
+
+/* ---------- utilities ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const today = () => { const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const parseD = s => { const [y,m,d]=String(s).slice(0,10).split('-').map(Number); return new Date(y,(m||1)-1,d||1); };
+const fmtD = s => s ? parseD(s).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'}) : '-';
+const fmtDT = s => s ? new Date(s).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+const money = n => Number(n||0).toLocaleString('th-TH');
+const addMonths = (s,m) => { const d=parseD(s); d.setMonth(d.getMonth()+m); const z=new Date(d.getTime()-d.getTimezoneOffset()*60000); return z.toISOString().slice(0,10); };
+const addDays = (s,n) => { const d=parseD(s); d.setDate(d.getDate()+n); const z=new Date(d.getTime()-d.getTimezoneOffset()*60000); return z.toISOString().slice(0,10); };
+const PAY_PLAN = [{inst:'1',label:'งวดที่ 1 (50%) วันลงนาม',pct:.5,days:0},{inst:'2',label:'งวดที่ 2 (30%) ส่งมอบระบบบริหารงาน',pct:.3,days:60},{inst:'3',label:'งวดที่ 3 (20%)',pct:.2,days:120}];
+function installments(f){ return PAY_PLAN.map(p=>({id:`p_${f.id}_${p.inst}`,fid:f.id,inst:p.inst,label:p.label,due:addDays(f.start,p.days),amount:Math.round(PKG[f.pkg].price*p.pct),paidDate:'',paidAmount:0,note:''})); }
+const dayDiff = (a,b) => Math.round((parseD(b)-parseD(a))/86400000);
+const ls = { get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}, del(k){try{localStorage.removeItem(k)}catch(e){}} };
+function toast(t){ const el=$('#toast'); el.textContent=t; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,2200); }
+
+/* ---------- state ---------- */
+const SHEETS = ['Franchisees','Logs','Status','Audits','Tickets','Documents','Trainings','Payments'];
+const S = { demo: !CONFIG.API_URL, auth:null, me:null, view:'dash', detail:null, filter:'open', data:{} };
+SHEETS.forEach(k=>S.data[k]=[]);
+
+/* ---------- demo data (ตัวอย่าง) ---------- */
+function seed(){
+  const sc = pat => { const o={}; AUDIT.forEach((c,ci)=>c.items.forEach((_,i)=>o[c.cat+i]=pat[(ci*6+i)%pat.length])); return o; };
+  const pct = o => Math.round(Object.values(o).reduce((a,b)=>a+b,0)/(Object.keys(o).length*2)*100);
+  const a1=sc([2,2,1,2,2,2,1,2]), a2=sc([1,2,1,1,2,0,2,1]), a3=sc([2,2,2,1,2,2,2,2,2]), a4=sc([2,1,2,2,1,2]);
+  return {
+    Franchisees:[
+      {id:'f1',code:'LP-2026',name:'บ้านอุ่นใจ เนอร์สซิ่งโฮม',owner:'คุณวรรณา (ตัวอย่าง)',phone:'08x-xxx-1111',province:'ลำปาง',pkg:'RB',beds:18,start:'2026-03-01',end:'2027-03-01',note:''},
+      {id:'f2',code:'CR-2026',name:'สวนพฤกษา ศูนย์ดูแลผู้สูงอายุ',owner:'คุณธนกร (ตัวอย่าง)',phone:'08x-xxx-2222',province:'เชียงราย',pkg:'BB',beds:30,start:'2026-06-15',end:'2027-06-15',note:'เปิดใหม่ ใช้แบรนด์ CMNH'},
+      {id:'f3',code:'PY-2025',name:'เรือนรักษ์ ผู้สูงอายุ',owner:'คุณศิริพร (ตัวอย่าง)',phone:'08x-xxx-3333',province:'พะเยา',pkg:'RB',beds:12,start:'2025-11-20',end:'2026-11-20',note:'ใกล้ครบสัญญา คุยเรื่องต่ออายุ'}
+    ],
+    Logs:[1,2,3,4,5,6].map(i=>({id:'l'+i,fid:'f2',key:'visit',date:addMonths('2026-06-20',Math.floor((i-1)/2)).slice(0,8)+String(10+i).padStart(2,'0'),note:['ตรวจหน้างานก่อนเปิด','วางผังห้องพักและจุดพยาบาล','ติดตามการรับผู้ป่วยรายแรก','ประชุมทีมผู้จัดการ','ตรวจสต็อกยาและเวชภัณฑ์','ติดตามแผนการตลาด'][i-1],by:'ทีม CMNH'})),
+    Status:[
+      ...['ops','careplan','stock','mkt','center','docs'].map(k=>({id:'f1_'+k,fid:'f1',key:k,status:k==='mkt'?1:2})),
+      {id:'f1_online_0',fid:'f1',key:'online_0',status:2},{id:'f1_online_1',fid:'f1',key:'online_1',status:2},{id:'f1_online_2',fid:'f1',key:'online_2',status:1},
+      ...['ops','careplan','stock','dcp'].map(k=>({id:'f2_'+k,fid:'f2',key:k,status:k==='stock'?1:2})),
+      {id:'f2_online_0',fid:'f2',key:'online_0',status:1},
+      ...['ops','careplan','stock','mkt','center','docs'].map(k=>({id:'f3_'+k,fid:'f3',key:k,status:2})),
+      ...[0,1,2,3].map(i=>({id:'f3_online_'+i,fid:'f3',key:'online_'+i,status:2}))
+    ],
+    Audits:[
+      {id:'a1',fid:'f3',date:'2026-03-10',auditor:'พว.ทีม Audit CMNH',round:1,scores:a2,comments:{care5:'กะดึกผู้ดูแลไม่พอ'},total:pct(a2),notes:'ภาพรวมพอใช้ เร่งปรับเรื่องอัตรากำลังกะดึก',followups:'เพิ่ม NA กะดึก 1 คน ภายใน 30 วัน'},
+      {id:'a2',fid:'f3',date:'2026-09-02',auditor:'พว.ทีม Audit CMNH',round:2,scores:a3,comments:{},total:pct(a3),notes:'ปรับปรุงดีขึ้นชัดเจน',followups:''},
+      {id:'a3',fid:'f1',date:'2026-08-18',auditor:'พว.ทีม Audit CMNH',round:1,scores:a1,comments:{},total:pct(a1),notes:'ระบบบันทึก ADL ยังไม่สม่ำเสมอ',followups:'อบรมการบันทึก ADL ให้ผู้ช่วยพยาบาล'},
+      {id:'a4',fid:'f2',date:'2026-09-25',auditor:'พว.ทีม Audit CMNH',round:1,scores:a4,comments:{},total:pct(a4),notes:'สาขาเปิดใหม่ ระบบพื้นฐานครบ',followups:'ติดตามสต็อกเวชภัณฑ์'}
+    ],
+    Tickets:[
+      {id:'t1',fid:'f2',type:'staff',title:'ขอ NA เพิ่ม 2 คน กะกลางวัน',detail:'ผู้รับบริการเพิ่มเป็น 22 ราย ต้องการ NA ที่มีใบอนุญาต สพส 14 เริ่มงาน 1 พ.ย.',status:'doing',replies:[{by:'hq',name:'ทีม CMNH',text:'รับเรื่องแล้วครับ กำลังคัดเลือกจากศูนย์บริบาล',at:'2026-10-09T10:20:00'}],createdAt:'2026-10-08T09:12:00',updatedAt:'2026-10-09T10:20:00'},
+      {id:'t2',fid:'f1',type:'dispute',title:'ญาติผู้ป่วยไม่ชำระค่าบริการ 2 เดือน',detail:'ขอคำแนะนำขั้นตอนการทวงถามและเอกสารที่ต้องเตรียม',status:'new',replies:[],createdAt:'2026-10-12T15:40:00',updatedAt:'2026-10-12T15:40:00'},
+      {id:'t3',fid:'f3',type:'doc',title:'ขอแบบฟอร์มสัญญาต่ออายุบริการรายเดือน',detail:'',status:'done',replies:[{by:'hq',name:'ทีม CMNH',text:'อัปโหลดไว้ในคลังเอกสารหมวดสัญญาและกฎหมายแล้วครับ',at:'2026-09-15T13:00:00'}],createdAt:'2026-09-14T08:00:00',updatedAt:'2026-09-15T13:00:00'},
+      {id:'t4',fid:'f2',type:'biz',title:'ปรึกษาการตั้งราคาห้องเดี่ยว',detail:'ต้องการเทียบราคากับตลาดเชียงราย',status:'done',replies:[{by:'hq',name:'ทีม CMNH',text:'ส่งตารางเทียบราคาให้ทาง LINE แล้วครับ',at:'2026-08-02T11:00:00'}],createdAt:'2026-07-30T10:00:00',updatedAt:'2026-08-02T11:00:00'}
+    ],
+    Documents:[{"id": "doc-fr-sop-01", "title": "FR-SOP-01 คู่มือการดำเนินงานศูนย์ดูแลผู้สูงอายุ", "cat": "คู่มือการดำเนินงาน (SOP)", "url": "https://docs.google.com/document/d/1l5LCZLsaVgpm_55gmZeXcRsVS7MG7Xra_5WKpOcRAzs/edit", "pkgs": "ALL", "desc": "มาตรฐานงานประจำวันทุกตำแหน่ง"}, {"id": "doc-fr-dcp-01", "title": "FR-DCP-01 คู่มือการใช้ Digital Elderly Care Platform", "cat": "คู่มือการดำเนินงาน (SOP)", "url": "https://docs.google.com/document/d/16KMOpLI3qodQt8toI14CX80jETxz3jRvTObztKtbR6Y/edit", "pkgs": "BB", "desc": "ระบบบันทึกข้อมูลการดูแล"}, {"id": "doc-fr-care-01", "title": "FR-CARE-01 แบบฟอร์ม Nursing Care Plan", "cat": "แบบฟอร์มบริบาล", "url": "https://docs.google.com/document/d/1aLeW9OiEPMaVvQmnXXRukMq5yw7DXoCZ6s4k9L0ZeWk/edit", "pkgs": "ALL", "desc": "จัดทำภายใน 24 ชม. หลังรับเข้า"}, {"id": "doc-fr-care-02", "title": "FR-CARE-02 แบบบันทึกสัญญาณชีพและ ADL", "cat": "แบบฟอร์มบริบาล", "url": "https://docs.google.com/document/d/1Y9IvWI5DIvlsdSe9Mn2yAoO75AZDTcquJ4zAGPGmoH4/edit", "pkgs": "ALL", "desc": "รวมแบบประเมิน Barthel ADL"}, {"id": "doc-fr-stk-01", "title": "FR-STK-01 แบบฟอร์มรับ-จ่ายสต็อกเวชภัณฑ์", "cat": "แบบฟอร์มบริหาร", "url": "https://docs.google.com/document/d/17tKfKLOBztjUFMcR9F-MeClDzPEGywLBAKzsbZMJd4s/edit", "pkgs": "ALL", "desc": "หนึ่งแผ่นต่อหนึ่งรายการสินค้า"}, {"id": "doc-fr-leg-01", "title": "FR-LEG-01 สัญญาให้บริการดูแลผู้สูงอายุรายเดือน", "cat": "สัญญาและกฎหมาย", "url": "https://docs.google.com/document/d/1LxCE6xMQ2x9i0aDZkznVIC1hJENBqrlE_TuXO2T9wDM/edit", "pkgs": "ALL", "desc": "แม่แบบ ให้ที่ปรึกษากฎหมายตรวจก่อนใช้"}, {"id": "doc-fr-ctr-01", "title": "FR-CTR-01 ใบประเมินราคาก่อนใช้บริการ", "cat": "งานลูกค้าและ Center", "url": "https://docs.google.com/document/d/1OrRGneBrwf8K1YgCWiBmWaBlKDVb7No2JHxa_C9CLt0/edit", "pkgs": "ALL", "desc": "แนบสัญญาเมื่อญาติตกลง"}, {"id": "doc-fr-ctr-02", "title": "FR-CTR-02 แบบรับผู้รับบริการใหม่ (Admission)", "cat": "งานลูกค้าและ Center", "url": "https://docs.google.com/document/d/1E-WFqPVQabPWnvBvL2NyHemJpKLP84HH3yN1wPfg3wA/edit", "pkgs": "ALL", "desc": "ตรวจรับยาและทรัพย์สินต่อหน้าญาติ"}, {"id": "doc-fr-ctr-03", "title": "FR-CTR-03 ใบรับเรื่องร้องเรียน", "cat": "งานลูกค้าและ Center", "url": "https://docs.google.com/document/d/1MdHrEjPpXrSiqLOxO1anCml2gdfOKBBRlsi0HNyElzY/edit", "pkgs": "ALL", "desc": "ตอบกลับภายใน 3 วันทำการ"}, {"id": "doc-fr-hr-01", "title": "FR-HR-01 ตารางเวรประจำเดือน", "cat": "บริหารบุคลากร", "url": "https://docs.google.com/document/d/1RNbxS-JsGggIO-S6ODbMMCLkvs9ymsDgwnYCcFgcu0g/edit", "pkgs": "ALL", "desc": ""}, {"id": "doc-fr-hr-02", "title": "FR-HR-02 ใบลงเวลาปฏิบัติงาน", "cat": "บริหารบุคลากร", "url": "https://docs.google.com/document/d/1h1LH3RLlOj6J29Slc5bxFYHx9O9Nx9633fJJvc4rGJo/edit", "pkgs": "ALL", "desc": ""}, {"id": "doc-fr-hr-03", "title": "FR-HR-03 แผนอบรมบุคลากรประจำปี", "cat": "บริหารบุคลากร", "url": "https://docs.google.com/document/d/1Ed7tvmpTx3-8ZxtcEGg4my3r9y5DieSVUYfppk3jA44/edit", "pkgs": "ALL", "desc": "แผนแนะนำ 12 เดือน"}, {"id": "doc-fr-hr-04", "title": "FR-HR-04 แบบประเมินผลการปฏิบัติงาน", "cat": "บริหารบุคลากร", "url": "https://docs.google.com/document/d/1PRoHa37lkS9Q3RmwR2iT9Qv1sfmlGav5ubaUMEgJvHo/edit", "pkgs": "ALL", "desc": "ทดลองงาน ครึ่งปี และประจำปี"}, {"id": "doc-fr-hr-05", "title": "FR-HR-05 แบบบรรยายลักษณะงาน (JD) 6 ตำแหน่ง", "cat": "บริหารบุคลากร", "url": "https://docs.google.com/document/d/1pnAP7vyG_sPKMB61wgaCjz_qoF4yAuJvdVF6fjGAGoI/edit", "pkgs": "ALL", "desc": "ปรับจาก JD ของ CMNH ให้ใช้กับสาขา"}, {"id": "doc-fr-qa-01", "title": "FR-QA-01 แบบตรวจคุณภาพภายใน (Internal Audit)", "cat": "คุณภาพและ Audit", "url": "https://docs.google.com/document/d/1oB5MGxSiLVL2FN315iBrF9c0mzHZXE6OEZ5xJQiKN7g/edit", "pkgs": "ALL", "desc": "ข้อเดียวกับในระบบ 18 ข้อ"}],
+    Payments:[
+      ...installments({id:'f1',pkg:'RB',start:'2026-03-01'}).map((p,i)=>({...p,paidDate:addDays('2026-03-01',[0,45,110][i]),paidAmount:p.amount})),
+      ...installments({id:'f2',pkg:'BB',start:'2026-06-15'}).map((p,i)=>i<2?{...p,paidDate:addDays('2026-06-15',[0,58][i]),paidAmount:p.amount}:p),
+      ...installments({id:'f3',pkg:'RB',start:'2025-11-20'}).map(p=>({...p,paidDate:p.due,paidAmount:p.amount})),
+      {id:'p_f3_renew1',fid:'f3',inst:'renew',label:'ค่าต่ออายุปีที่ 2',due:'2026-11-20',amount:150000,paidDate:'',paidAmount:0,note:''}
+    ],
+    Trainings:[
+      {id:'r1',fid:'f1',date:'2026-04-05',topic:'มาตรฐานการดูแลผู้สูงอายุติดเตียง',groups:['ผู้ช่วยพยาบาล','เจ้าหน้าที่ประจำศูนย์'],attendees:9,trainer:'พว.ทีม CMNH',hours:6,note:''},
+      {id:'r2',fid:'f1',date:'2026-09-01',topic:'การบันทึก ADL (Barthel Index)',groups:['ผู้ช่วยพยาบาล'],attendees:7,trainer:'พว.ทีม CMNH',hours:3,note:'ติดตามผลจาก Audit ครั้งที่ 1'},
+      {id:'r3',fid:'f2',date:'2026-06-20',topic:'ปฐมนิเทศระบบบริหารงาน CMNH',groups:['ผู้ประกอบการ','ผู้จัดการ'],attendees:3,trainer:'ทีมบริหาร CMNH',hours:6,note:''},
+      {id:'r4',fid:'f2',date:'2026-07-11',topic:'อาหารปั่นและโภชนาการผู้สูงอายุ',groups:['แม่ครัว','แม่บ้าน'],attendees:5,trainer:'นักโภชนาการ CMNH',hours:4,note:''}
+    ]
+  };
+}
+const DEMO_KEY='cmnh_franchise_demo_v3', DEMO_PIN='1234';
+function demoDB(){ let db=ls.get(DEMO_KEY); if(!db||!db.Franchisees){ db=seed(); ls.set(DEMO_KEY,db); } return db; }
+function scope(db,auth){
+  if(auth.role==='admin') return db;
+  const f=db.Franchisees.find(x=>x.code===auth.code); if(!f) return null;
+  const mine=r=>r.fid===f.id, out={};
+  SHEETS.forEach(k=>out[k]=(db[k]||[]).filter(mine));
+  out.Franchisees=[f];
+  out.Documents=db.Documents.filter(d=>d.pkgs==='ALL'||String(d.pkgs).split(',').includes(f.pkg));
+  return out;
+}
+let MEM_DB=null;
+function demoCall(action,p){
+  const db = MEM_DB || (MEM_DB=demoDB());
+  const persist=()=>ls.set(DEMO_KEY,db);
+  const auth=p.auth;
+  const isAdmin = auth && auth.role==='admin' && auth.pin===DEMO_PIN;
+  const fr = auth && auth.role==='fr' ? db.Franchisees.find(x=>x.code===String(auth.code).trim().toUpperCase()) : null;
+  if(!isAdmin && !fr) throw new Error(auth&&auth.role==='admin'?'รหัส PIN ไม่ถูกต้อง':'ไม่พบรหัสสาขานี้');
+  if(action==='login') return isAdmin?{role:'admin',name:'สำนักงานใหญ่ CMNH'}:{role:'fr',fid:fr.id,name:fr.name,code:fr.code};
+  if(action==='load') return scope(db,isAdmin?auth:{role:'fr',code:fr.code});
+  if(action==='save'){
+    let {sheet,rec}=p;
+    if(!isAdmin){ if(sheet!=='Tickets'||db.Tickets.some(t=>t.id===rec.id)) throw new Error('ไม่มีสิทธิ์แก้ไข'); rec={...rec,fid:fr.id,status:'new',replies:[]}; }
+    const arr=db[sheet]; const i=arr.findIndex(r=>r.id===rec.id); if(i>=0)arr[i]=rec; else arr.push(rec); persist(); return rec;
+  }
+  if(action==='remove'){ if(!isAdmin) throw new Error('ไม่มีสิทธิ์ลบ'); db[p.sheet]=db[p.sheet].filter(r=>r.id!==p.id); persist(); return true; }
+  if(action==='reply'){
+    const t=db.Tickets.find(x=>x.id===p.id); if(!t||(!isAdmin&&t.fid!==fr.id)) throw new Error('ไม่พบคำขอ');
+    if(String(p.text||'').trim()) t.replies=[...(t.replies||[]),{by:isAdmin?'hq':'fr',name:isAdmin?'ทีม CMNH':fr.name,text:p.text,at:new Date().toISOString()}];
+    if(isAdmin&&p.status) t.status=p.status; t.updatedAt=new Date().toISOString(); persist(); return t;
+  }
+  throw new Error('unknown action');
+}
+
+/* ---------- API ---------- */
+async function api(action,payload={}){
+  const body={action,auth:S.auth,...payload};
+  if(S.demo) return JSON.parse(JSON.stringify(demoCall(action,body)));
+  const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+  const j=await r.json(); if(!j.ok) throw new Error(j.error||'เกิดข้อผิดพลาด'); return j.data;
+}
+async function load(){ const d=await api('load'); SHEETS.forEach(k=>S.data[k]=d[k]||[]); }
+async function save(sheet,rec){
+  const saved=await api('save',{sheet,rec});
+  const arr=S.data[sheet]; const i=arr.findIndex(r=>r.id===saved.id); if(i>=0)arr[i]=saved; else arr.push(saved);
+  return saved;
+}
+async function removeRec(sheet,id){ await api('remove',{sheet,id}); S.data[sheet]=S.data[sheet].filter(r=>r.id!==id); }
+
+/* ---------- domain helpers ---------- */
+const isAdmin = () => S.me && S.me.role==='admin';
+const F = id => S.data.Franchisees.find(f=>f.id===id);
+const fname = id => (F(id)||{}).name || '-';
+function contract(f){
+  const t=today(), total=Math.max(1,dayDiff(f.start,f.end)), el=dayDiff(f.start,t), left=dayDiff(t,f.end);
+  let st='active',lbl='ใช้งานอยู่',cls='ok';
+  if(el<0){st='pending';lbl='ยังไม่เริ่มสัญญา';cls='mute';}
+  else if(left<0){st='expired';lbl='หมดอายุสัญญา';cls='bad';}
+  else if(left<=90){st='expiring';lbl=`เหลือ ${left} วัน`;cls='warn';}
+  return {total,el,left,pct:Math.min(100,Math.max(0,Math.round(el/total*100))),st,lbl,cls};
+}
+function statusOf(fid,key){ const r=S.data.Status.find(x=>x.fid===fid&&x.key===key); return r?Number(r.status):0; }
+function delivered(f,b){
+  if(b.subs){ const v=b.subs.map((_,i)=>statusOf(f.id,b.key+'_'+i)); return v.every(x=>x===2)?2:v.some(x=>x>0)?1:0; }
+  return statusOf(f.id,b.key);
+}
+function usage(f,b){
+  const src=b.src||'logs';
+  if(src==='audits') return {used:S.data.Audits.filter(a=>a.fid===f.id).length,pending:0};
+  if(src==='trainings') return {used:S.data.Trainings.filter(a=>a.fid===f.id).length,pending:0};
+  if(src.startsWith('tickets:')){ const ty=src.split(':')[1]; const ts=S.data.Tickets.filter(t=>t.fid===f.id&&t.type===ty); return {used:ts.filter(t=>t.status==='done').length,pending:ts.filter(t=>t.status!=='done').length}; }
+  return {used:S.data.Logs.filter(l=>l.fid===f.id&&l.key===b.key).length,pending:0};
+}
+function progress(f){
+  const bs=PKG[f.pkg].benefits.filter(b=>b.type==='deliver');
+  const pts=bs.reduce((a,b)=>a+delivered(f,b),0); return Math.round(pts/(bs.length*2)*100);
+}
+const chip=(t,c='')=>`<span class="chip ${c}">${esc(t)}</span>`;
+const delChip=v=>chip(DELIVER[v],['mute','warn','ok'][v]);
+const scoreCls=p=>p>=80?'ok':p>=60?'warn':'bad';
+const bar=(p,cls='')=>`<div class="bar ${cls}"><i style="width:${Math.max(0,Math.min(100,p))}%"></i></div>`;
+
+/* ---------- render: shell ---------- */
+const NAV_ADMIN=[['dash','ภาพรวม'],['branches','สาขาแฟรนไชส์'],['audits','Audit'],['tickets','คำขอจากสาขา'],['finance','การเงิน'],['trainings','บันทึกอบรม'],['docs','คลังเอกสาร'],['packages','แพ็กเกจ']];
+const NAV_FR=[['home','สิทธิ์ของฉัน'],['tickets','คำขอของฉัน'],['audits','ผล Audit'],['trainings','ประวัติอบรม'],['docs','เอกสาร']];
+const ICONS={
+  dash:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  branches:'<path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/><path d="M9 10h.01M15 10h.01"/>',
+  audits:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/>',
+  tickets:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>',
+  trainings:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+  docs:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+  packages:'<path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7M12 11v10"/>',
+  finance:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/>',
+  more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'
+};
+const ico=k=>`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]||''}</svg>`;
+const SHORT={dash:'ภาพรวม',branches:'สาขา',audits:'Audit',tickets:'คำขอ',trainings:'อบรม',docs:'เอกสาร',packages:'แพ็กเกจ',home:'หน้าหลัก',finance:'การเงิน'};
+function bottomNav(nav,openT){
+  const main=nav.length>5?nav.slice(0,4):nav, rest=nav.length>5?nav.slice(4):[];
+  const inRest=rest.some(([k])=>k===S.view);
+  return `<nav class="bnav" aria-label="เมนูหลัก">${main.map(([k])=>`<button data-act="nav" data-v="${k}" aria-current="${S.view===k}">${ico(k)}<span>${SHORT[k]}</span>${k==='tickets'&&openT?`<span class="dot num">${openT}</span>`:''}</button>`).join('')}
+  ${rest.length?`<button data-act="more" aria-current="${inRest}">${ico('more')}<span>${inRest?SHORT[S.view]:'เพิ่มเติม'}</span></button>`:''}</nav>`;
+}
+function moreSheet(){
+  const rest=NAV_ADMIN.slice(4);
+  openModal(`<div class="sh"><h2>เมนูเพิ่มเติม</h2><button class="x" data-act="close" aria-label="ปิด">×</button></div>
+  <div class="sb morelist">${rest.map(([k,l])=>`<button class="btn" data-act="nav" data-v="${k}">${ico(k)} ${l}</button>`).join('')}</div>`);
+}
+function render(){
+  const app=$('#app');
+  if(!S.me){ app.innerHTML=loginView(); return; }
+  const nav=isAdmin()?NAV_ADMIN:NAV_FR;
+  const openT=S.data.Tickets.filter(t=>t.status!=='done').length;
+  app.innerHTML=`
+  <header class="top"><div class="wrap">
+    <div class="brand"><div class="mark">CM</div><div><b>CMNH Franchise</b><span>${isAdmin()?'Franchiser · สำนักงานใหญ่':'Franchisee · '+esc(S.me.name)}</span></div></div>
+    <div class="sp"></div>
+    <button class="btn sm ghost" data-act="logout">ออกจากระบบ</button>
+  </div></header>
+  ${S.demo?`<div class="demo"><div class="wrap"><b>โหมดทดลอง</b><span class="why">ข้อมูลทั้งหมดเป็นตัวอย่าง เก็บในเบราว์เซอร์นี้เท่านั้น</span><span class="only-mob">· ข้อมูลตัวอย่าง</span>${isAdmin()?'<button class="btn sm" data-act="reset-demo">รีเซ็ต</button>':''}</div></div>`:''}
+  <nav class="tabs" aria-label="เมนู"><div class="wrap">${nav.map(([k,l])=>`<button class="tab" data-act="nav" data-v="${k}" aria-current="${S.view===k}">${l}${k==='tickets'&&openT?` <span class="chip warn nodot num">${openT}</span>`:''}</button>`).join('')}</div></nav>
+  <main><div class="wrap" id="view">${viewHTML()}</div></main>
+  ${bottomNav(nav,openT)}`;
+}
+function viewHTML(){
+  try{
+    if(isAdmin()){
+      if(S.view==='branches') return S.detail?branchDetail(F(S.detail)):branchesView();
+      return ({dash:dashView,audits:auditsView,tickets:ticketsView,finance:financeView,trainings:trainingsView,docs:docsView,packages:packagesView}[S.view]||dashView)();
+    }
+    const f=S.data.Franchisees[0]; if(!f) return '<div class="empty">ไม่พบข้อมูลสาขา</div>';
+    return ({home:()=>frHome(f),tickets:ticketsView,audits:auditsView,trainings:trainingsView,docs:docsView}[S.view]||(()=>frHome(f)))();
+  }catch(e){ console.error(e); return `<div class="card err">แสดงผลไม่สำเร็จ: ${esc(e.message)}</div>`; }
+}
+
+/* ---------- login ---------- */
+function loginView(){
+  return `<div class="login"><div class="box">
+    <div class="hero"><div class="mark">CM</div><h1>CMNH Franchise Portal</h1><p class="muted">ระบบติดตามสิทธิ์แพ็กเกจ Audit และคำขอของสาขาแฟรนไชส์ Nursing Home Care</p></div>
+    <div class="two">
+      <form class="card" data-form="login-admin">
+        <div class="eyebrow">Franchiser</div><h2>สำนักงานใหญ่ CMNH</h2>
+        <p class="muted small">ดูแลทุกสาขา บันทึกการส่งมอบ ตรวจ Audit และตอบคำขอ</p>
+        <label class="f">รหัส PIN<input type="password" id="pin" inputmode="numeric" autocomplete="current-password" required></label>
+        <div class="err" id="err-admin"></div>
+        <button class="btn pri" type="submit">เข้าสู่ระบบ</button>
+        ${S.demo?'<p class="small muted">โหมดทดลอง: PIN <b class="num">1234</b></p>':''}
+      </form>
+      <form class="card" data-form="login-fr">
+        <div class="eyebrow">Franchisee</div><h2>สาขาแฟรนไชส์</h2>
+        <p class="muted small">ดูสิทธิ์ที่เหลือ ผลตรวจคุณภาพ เอกสาร และยื่นคำขอถึงสำนักงานใหญ่</p>
+        <label class="f">รหัสสาขา<input type="text" id="code" autocomplete="username" placeholder="เช่น LP-2026" required></label>
+        <div class="err" id="err-fr"></div>
+        <button class="btn gold" type="submit">เข้าสู่ระบบสาขา</button>
+        ${S.demo?'<p class="small muted">โหมดทดลอง: <b>LP-2026</b> (Re-Branding) หรือ <b>CR-2026</b> (Build-Branding)</p>':''}
+      </form>
+    </div>
+  </div></div>`;
+}
+async function doLogin(auth,errId){
+  const err=$(errId); err.textContent='';
+  try{ S.auth=auth; const me=await api('login'); S.me=me; S.view=me.role==='admin'?'dash':'home'; S.detail=null; await load(); ls.set('cmnh_fr_session',{auth}); render(); window.scrollTo(0,0); }
+  catch(e){ S.auth=null; S.me=null; err.textContent=e.message; }
+}
+
+/* ---------- admin: dashboard ---------- */
+function dashView(){
+  const fs=S.data.Franchisees, act=fs.filter(f=>['active','expiring'].includes(contract(f).st));
+  const value=act.reduce((a,f)=>a+PKG[f.pkg].price,0);
+  const open=S.data.Tickets.filter(t=>t.status!=='done');
+  const auditLeft=act.reduce((a,f)=>{const b=PKG[f.pkg].benefits.find(x=>x.key==='audit');return a+Math.max(0,b.max-usage(f,b).used);},0);
+  const exp=fs.map(f=>({f,c:contract(f)})).filter(x=>x.c.st==='expiring'||x.c.st==='expired').sort((a,b)=>a.c.left-b.c.left);
+  return `
+  <div class="head"><div><h1>ภาพรวมแฟรนไชส์</h1><p class="muted">ข้อมูล ณ ${fmtD(today())}</p></div><button class="btn pri" data-act="branch-form">+ เพิ่มสาขาใหม่</button></div>
+  <div class="kpis">
+    <div class="card kpi"><div class="l">สาขาที่อยู่ในสัญญา</div><div class="v">${act.length}<span class="muted small"> / ${fs.length} สาขา</span></div></div>
+    <div class="card kpi"><div class="l">มูลค่าสัญญาที่ใช้งาน</div><div class="v">${money(value)} <span class="small muted">บาท</span></div></div>
+    <div class="card kpi"><div class="l">คำขอที่ยังไม่ปิด</div><div class="v" style="color:var(--${open.length?'warn':'ok'})">${open.length}</div></div>
+    <div class="card kpi"><div class="l">รอบ Audit ที่ยังต้องตรวจ</div><div class="v">${auditLeft}<span class="muted small"> รอบ</span></div></div>
+    <div class="card kpi click" data-act="nav" data-v="finance" style="cursor:pointer"><div class="l">ค้างชำระเกินกำหนด</div><div class="v" style="color:var(--${finSummary(S.data.Payments).overdue?'bad':'ok'})">${money(finSummary(S.data.Payments).overdue)} <span class="small muted">บาท</span></div></div>
+  </div>
+  <div class="cols">
+    <section class="panel"><div class="ph"><h2>ความคืบหน้ารายสาขา</h2></div><div class="pb list">
+      ${fs.length?fs.map(f=>{const c=contract(f),p=progress(f),ab=PKG[f.pkg].benefits.find(x=>x.key==='audit'),u=usage(f,ab).used;return `
+      <div class="li click" data-act="open-branch" data-id="${f.id}"><div style="flex:1">
+        <div class="row" style="justify-content:space-between"><span class="t">${esc(f.name)}</span>${chip(c.lbl,c.cls)}</div>
+        <div class="small muted">${PKG[f.pkg].name} · ${esc(f.province)} · Audit <span class="num">${u}/${ab.max}</span></div>
+        <div class="row small" style="margin-top:6px;flex-wrap:nowrap"><div style="flex:1">${bar(p)}</div><span class="num muted">ส่งมอบ ${p}%</span></div>
+      </div></div>`;}).join(''):'<div class="empty">ยังไม่มีสาขา กด "เพิ่มสาขาใหม่" เพื่อเริ่ม</div>'}
+    </div></section>
+    <div style="display:grid;gap:16px">
+      <section class="panel"><div class="ph"><h2>คำขอล่าสุด</h2><button class="btn sm" data-act="nav" data-v="tickets">ดูทั้งหมด</button></div><div class="pb list">
+        ${open.length?open.sort((a,b)=>String(b.createdAt).localeCompare(a.createdAt)).slice(0,5).map(ticketRow).join(''):'<div class="empty">ไม่มีคำขอค้าง</div>'}
+      </div></section>
+      <section class="panel"><div class="ph"><h2>สัญญาใกล้ครบ (90 วัน)</h2></div><div class="pb list">
+        ${exp.length?exp.map(({f,c})=>`<div class="li click" data-act="open-branch" data-id="${f.id}"><div><div class="t">${esc(f.name)}</div><div class="small muted">ครบสัญญา ${fmtD(f.end)} · ค่าต่ออายุ ${money(PKG[f.pkg].renew)} บาท</div></div>${chip(c.lbl,c.cls)}</div>`).join(''):'<div class="empty">ไม่มีสัญญาใกล้ครบ</div>'}
+      </div></section>
+    </div>
+  </div>`;
+}
+
+/* ---------- admin: branches ---------- */
+function branchesView(){
+  const fs=S.data.Franchisees;
+  return `<div class="head"><div><h1>สาขาแฟรนไชส์</h1><p class="muted">${fs.length} สาขา</p></div><button class="btn pri" data-act="branch-form">+ เพิ่มสาขาใหม่</button></div>
+  <div class="panel only-mob"><div class="pb">${fs.map(f=>{const c=contract(f),p=progress(f);return `
+    <div class="mcard" data-act="open-branch" data-id="${f.id}">
+      <div class="top2"><div><div class="t">${esc(f.name)}</div><div class="small muted">${esc(f.province)} · <span class="pkgtag">${PKG[f.pkg].name}</span>${f.beds?` · <span class="num">${f.beds} เตียง</span>`:''}</div></div>${chip(c.lbl,c.cls)}</div>
+      <div class="small muted num">รหัส ${esc(f.code)} · ครบสัญญา ${fmtD(f.end)}</div>
+      <div class="row small" style="flex-wrap:nowrap"><div style="flex:1">${bar(p)}</div><span class="num muted">ส่งมอบ ${p}%</span></div>
+    </div>`;}).join('')||'<div class="empty">ยังไม่มีสาขา</div>'}</div></div>
+  <div class="panel only-desk"><div class="tbl"><table>
+    <thead><tr><th>สาขา</th><th>แพ็กเกจ</th><th>รหัสเข้าระบบ</th><th>ระยะสัญญา</th><th>ส่งมอบ</th><th>สถานะ</th></tr></thead>
+    <tbody>${fs.map(f=>{const c=contract(f);return `<tr class="click" data-act="open-branch" data-id="${f.id}">
+      <td><b>${esc(f.name)}</b><div class="small muted">${esc(f.province)} · ${esc(f.owner)}</div></td>
+      <td><span class="pkgtag">${PKG[f.pkg].name}</span>${f.beds?`<div class="small muted num">${f.beds} เตียง</div>`:''}</td>
+      <td class="num">${esc(f.code)}</td>
+      <td class="small num">${fmtD(f.start)} – ${fmtD(f.end)}</td>
+      <td class="num" style="min-width:110px">${bar(progress(f))}<span class="small muted">${progress(f)}%</span></td>
+      <td>${chip(c.lbl,c.cls)}</td></tr>`;}).join('')||'<tr><td colspan="6" class="empty">ยังไม่มีสาขา</td></tr>'}</tbody>
+  </table></div></div>`;
+}
+function contractStrip(f){
+  const c=contract(f), P=PKG[f.pkg];
+  return `<div class="card" style="display:grid;gap:14px">
+    <div class="contract">
+      <div><div class="l">แพ็กเกจ</div><div class="v pkgtag">${P.name}</div></div>
+      <div><div class="l">มูลค่าแพ็กเกจ</div><div class="v num">${money(P.price)} บาท</div></div>
+      <div><div class="l">ขนาด</div><div class="v num">${f.beds?f.beds+' เตียง':'-'}</div></div>
+      <div><div class="l">ค่าต่ออายุปีถัดไป</div><div class="v num">${money(P.renew)} บาท</div></div>
+      <div><div class="l">อายุสัญญา</div><div class="v num">${fmtD(f.start)} – ${fmtD(f.end)}</div></div>
+    </div>
+    <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><span class="small muted num">ผ่านมาแล้ว ${Math.max(0,c.el)} จาก ${c.total} วัน</span>${chip(c.lbl,c.cls)}</div>${bar(c.pct,'gold')}</div>
+  </div>`;
+}
+function benefitCard(f,b,i,editable){
+  let ctl='';
+  if(b.type==='deliver'){
+    const v=delivered(f,b);
+    if(b.subs){
+      ctl=`<div class="row">${delChip(v)}</div><div class="subs">${b.subs.map((s,j)=>{const sv=statusOf(f.id,b.key+'_'+j);return editable
+        ?`<label><select data-act="set-status" data-key="${b.key}_${j}" data-fid="${f.id}" style="width:auto;padding:3px 6px;font-size:.85rem">${DELIVER.map((d,k)=>`<option value="${k}" ${k===sv?'selected':''}>${d}</option>`).join('')}</select>${esc(s)}</label>`
+        :`<div class="row">${sv===2?'✓':'·'} ${esc(s)} <span class="small muted">${DELIVER[sv]}</span></div>`;}).join('')}</div>`;
+    } else {
+      ctl=editable?`<label class="f small">สถานะการส่งมอบ<select data-act="set-status" data-key="${b.key}" data-fid="${f.id}">${DELIVER.map((d,k)=>`<option value="${k}" ${k===v?'selected':''}>${d}</option>`).join('')}</select></label>`:`<div>${delChip(v)}</div>`;
+    }
+  } else {
+    const u=usage(f,b);
+    if(b.type==='quota'){
+      const left=Math.max(0,b.max-u.used);
+      ctl=`<div class="row" style="justify-content:space-between"><span class="num"><b>${u.used}</b> / ${b.max} ครั้ง</span>${chip(left?`เหลือ ${left}`:'ใช้ครบแล้ว',left?'':'ok')}</div>${bar(u.used/b.max*100)}`;
+    } else {
+      ctl=`<div class="row"><span class="num">ใช้แล้ว <b>${u.used}</b> ครั้ง</span>${u.pending?chip(`รอดำเนินการ ${u.pending}`,'warn'):''}</div>`;
+    }
+    if(editable){
+      if(b.src==='audits') ctl+=`<div><button class="btn sm" data-act="audit-form" data-fid="${f.id}">+ บันทึก Audit</button></div>`;
+      else if(b.src==='trainings') ctl+=`<div><button class="btn sm" data-act="training-form" data-fid="${f.id}">+ บันทึกการอบรม</button></div>`;
+      else if((b.src||'logs')==='logs') ctl+=`<div><button class="btn sm" data-act="log-form" data-fid="${f.id}" data-key="${b.key}">+ บันทึกการใช้สิทธิ์</button></div>`;
+      else ctl+=`<div class="small muted">นับจากคำขอที่ปิดแล้ว</div>`;
+    }
+  }
+  return `<div class="ben"><div class="n num">${i+1}</div><div style="min-width:0"><div class="t">${esc(b.title)}</div>${b.sub?`<div class="s">${esc(b.sub)}</div>`:''}<div class="ctl">${ctl}</div></div></div>`;
+}
+function branchDetail(f){
+  if(!f){ S.detail=null; return branchesView(); }
+  const logs=S.data.Logs.filter(l=>l.fid===f.id).sort((a,b)=>String(b.date).localeCompare(a.date));
+  const audits=S.data.Audits.filter(a=>a.fid===f.id).sort((a,b)=>String(b.date).localeCompare(a.date));
+  return `<div class="head"><div><button class="btn sm" data-act="back">← ทุกสาขา</button><h1 style="margin-top:10px">${esc(f.name)}</h1>
+    <p class="muted">${esc(f.province)} · ${esc(f.owner)} · ${esc(f.phone)} · รหัสเข้าระบบ <b class="num">${esc(f.code)}</b></p>${f.note?`<p class="small">${esc(f.note)}</p>`:''}</div>
+    <div class="row"><button class="btn" data-act="branch-form" data-id="${f.id}">แก้ไขข้อมูลสาขา</button></div></div>
+  ${contractStrip(f)}
+  <h2 style="margin:22px 0 10px">สิทธิประโยชน์ตามแพ็กเกจ <span class="muted small">(${PKG[f.pkg].benefits.length} รายการ)</span></h2>
+  <div class="bens">${PKG[f.pkg].benefits.map((b,i)=>benefitCard(f,b,i,true)).join('')}</div>
+  <p class="small muted" style="margin-top:8px">${AUDIT_NOTE}</p>
+  <section class="panel" style="margin-top:20px"><div class="ph"><h2>งวดชำระเงิน</h2><button class="btn sm" data-act="add-renew" data-fid="${f.id}">+ เพิ่มงวดค่าต่ออายุ</button></div><div class="pb">${payTable(paysOf(f.id),false)}</div></section>
+  <div class="cols" style="margin-top:20px">
+    <section class="panel"><div class="ph"><h2>ผล Audit</h2></div><div class="pb list">${audits.length?audits.map(auditRow).join(''):'<div class="empty">ยังไม่มีการตรวจ</div>'}</div></section>
+    <section class="panel"><div class="ph"><h2>บันทึกการใช้สิทธิ์</h2></div><div class="pb list">${logs.length?logs.map(l=>{const b=PKG[f.pkg].benefits.find(x=>x.key===l.key);return `<div class="li"><div><div class="t">${esc(b?b.title:l.key)}</div><div class="small muted">${fmtD(l.date)} · ${esc(l.note)}</div></div><button class="btn sm danger" data-act="del" data-sheet="Logs" data-id="${l.id}">ลบ</button></div>`;}).join(''):'<div class="empty">ยังไม่มีบันทึก</div>'}</div></section>
+  </div>`;
+}
+function branchForm(id){
+  const f=id?F(id):{id:'',code:'',name:'',owner:'',phone:'',province:'',pkg:'RB',beds:'',start:today(),note:''};
+  openModal(`<form data-form="branch" data-id="${esc(f.id)}">
+    <div class="sh"><h2>${id?'แก้ไขข้อมูลสาขา':'เพิ่มสาขาแฟรนไชส์'}</h2><button type="button" class="x" data-act="close" aria-label="ปิด">×</button></div>
+    <div class="sb">
+      <label class="f">ชื่อสถานประกอบการ<input type="text" id="b-name" value="${esc(f.name)}" required></label>
+      <div class="grid2">
+        <label class="f">ชื่อผู้ประกอบการ<input type="text" id="b-owner" value="${esc(f.owner)}"></label>
+        <label class="f">เบอร์โทร<input type="text" id="b-phone" value="${esc(f.phone)}"></label>
+        <label class="f">จังหวัด<input type="text" id="b-province" value="${esc(f.province)}"></label>
+        <label class="f">แพ็กเกจ<select id="b-pkg">${Object.values(PKG).map(p=>`<option value="${p.code}" ${p.code===f.pkg?'selected':''}>${p.name} · ${money(p.price)} บาท</option>`).join('')}</select></label>
+        <label class="f">จำนวนเตียง<input type="number" id="b-beds" min="0" value="${esc(f.beds)}"></label>
+        <label class="f">วันเริ่มสัญญา<input type="date" id="b-start" value="${esc(f.start)}" required></label>
+        <label class="f">รหัสเข้าระบบของสาขา<input type="text" id="b-code" value="${esc(f.code)}" placeholder="เว้นว่างเพื่อสร้างอัตโนมัติ"></label>
+      </div>
+      <label class="f">หมายเหตุ<textarea id="b-note">${esc(f.note)}</textarea></label>
+      <p class="small muted">วันสิ้นสุดสัญญาคำนวณอัตโนมัติ 1 ปีจากวันเริ่ม</p>
+    </div>
+    <div class="sf">${id?`<button type="button" class="btn danger" data-act="del" data-sheet="Franchisees" data-id="${f.id}">ลบสาขา</button>`:''}<button type="button" class="btn" data-act="close">ยกเลิก</button><button class="btn pri" type="submit">บันทึก</button></div>
+  </form>`);
+}
+
+/* ---------- audits ---------- */
+function auditRow(a){
+  return `<div class="li click" data-act="audit-view" data-id="${a.id}"><div><div class="t">${isAdmin()&&S.view!=='branches'?esc(fname(a.fid))+' · ':''}ครั้งที่ ${esc(a.round)}</div><div class="small muted">${fmtD(a.date)} · ${esc(a.auditor)}</div></div>${chip(a.total+'%',scoreCls(a.total))}</div>`;
+}
+function auditsView(){
+  const list=[...S.data.Audits].sort((a,b)=>String(b.date).localeCompare(a.date));
+  let quota='';
+  if(isAdmin()){
+    quota=`<div class="panel" style="margin-bottom:16px"><div class="ph"><h2>โควตา Audit รายสาขา</h2><span class="small muted">${AUDIT_NOTE}</span></div>
+    <div class="pb only-mob">${S.data.Franchisees.map(f=>{const b=PKG[f.pkg].benefits.find(x=>x.key==='audit'),u=usage(f,b).used,last=list.find(a=>a.fid===f.id);return `<div class="mcard" style="cursor:default">
+      <div class="top2"><div><div class="t">${esc(f.name)}</div><div class="small muted">${PKG[f.pkg].name} · ตรวจแล้ว <span class="num">${u}/${b.max}</span></div></div>${last?chip(last.total+'%',scoreCls(last.total)):''}</div>
+      ${bar(u/b.max*100)}<div><button class="btn sm" data-act="audit-form" data-fid="${f.id}" ${u>=b.max?'disabled':''}>+ ตรวจรอบใหม่</button></div></div>`;}).join('')}</div>
+    <div class="tbl only-desk"><table><thead><tr><th>สาขา</th><th>แพ็กเกจ</th><th>ตรวจแล้ว</th><th>คะแนนล่าสุด</th><th></th></tr></thead><tbody>
+    ${S.data.Franchisees.map(f=>{const b=PKG[f.pkg].benefits.find(x=>x.key==='audit'),u=usage(f,b).used,last=list.find(a=>a.fid===f.id);return `<tr><td><b>${esc(f.name)}</b></td><td>${PKG[f.pkg].name}</td><td class="num" style="min-width:120px">${u} / ${b.max} ${bar(u/b.max*100)}</td><td>${last?chip(last.total+'%',scoreCls(last.total)):'<span class="muted">-</span>'}</td><td><button class="btn sm" data-act="audit-form" data-fid="${f.id}" ${u>=b.max?'disabled':''}>+ ตรวจรอบใหม่</button></td></tr>`;}).join('')}
+    </tbody></table></div></div>`;
+  }
+  return `<div class="head"><div><h1>${isAdmin()?'Internal Audit':'ผลตรวจคุณภาพ (Audit)'}</h1><p class="muted">ด้านบริการ บริบาล และบริหาร · ${list.length} รายการ</p></div>${isAdmin()?'<button class="btn pri" data-act="audit-form">+ บันทึก Audit</button>':''}</div>
+  ${quota}<section class="panel"><div class="ph"><h2>ประวัติการตรวจ</h2></div><div class="pb list">${list.length?list.map(auditRow).join(''):'<div class="empty">ยังไม่มีผลการตรวจ</div>'}</div></section>`;
+}
+function catPct(scores,c){ const v=c.items.map((_,i)=>Number(scores[c.cat+i]||0)); return Math.round(v.reduce((a,b)=>a+b,0)/(v.length*2)*100); }
+function auditForm(fid){
+  const fs=S.data.Franchisees;
+  openModal(`<form data-form="audit">
+    <div class="sh"><h2>บันทึกผล Internal Audit</h2><button type="button" class="x" data-act="close" aria-label="ปิด">×</button></div>
+    <div class="sb">
+      <div class="grid2">
+        <label class="f">สาขา<select id="a-fid" required>${fs.map(f=>`<option value="${f.id}" ${f.id===fid?'selected':''}>${esc(f.name)}</option>`).join('')}</select></label>
+        <label class="f">วันที่ตรวจ<input type="date" id="a-date" value="${today()}" required></label>
+        <label class="f">ผู้ตรวจ<input type="text" id="a-auditor" value="พว.ทีม Audit CMNH"></label>
+      </div>
+      <div class="row" style="justify-content:space-between"><span class="small muted">ให้คะแนน: ผ่าน = 2, ปรับปรุง = 1, ไม่ผ่าน = 0</span><span>คะแนนรวม <b class="num" id="a-total">0%</b></span></div>
+      ${AUDIT.map(c=>`<div class="acat"><h3><span>${c.label}</span><span class="num" id="a-cat-${c.cat}">0%</span></h3>${c.items.map((it,i)=>`
+        <div class="aitem"><span>${esc(it)}</span><span class="seg">${[2,1,0].map(v=>`<label><input type="radio" name="${c.cat}${i}" value="${v}" ${v===2?'checked':''}>${SCORE_LBL[v]}</label>`).join('')}</span>
+        <input type="text" id="cm-${c.cat}${i}" placeholder="ข้อสังเกต (ถ้ามี)" aria-label="ข้อสังเกต ${esc(it)}"></div>`).join('')}</div>`).join('')}
+      <label class="f">สรุปผลการตรวจ<textarea id="a-notes"></textarea></label>
+      <label class="f">สิ่งที่ต้องแก้ไขและติดตาม<textarea id="a-follow"></textarea></label>
+    </div>
+    <div class="sf"><button type="button" class="btn" data-act="close">ยกเลิก</button><button class="btn pri" type="submit">บันทึกผล Audit</button></div>
+  </form>`);
+  updateAuditTotal();
+}
+function readAuditScores(){ const o={}; AUDIT.forEach(c=>c.items.forEach((_,i)=>{const r=document.querySelector(`input[name="${c.cat}${i}"]:checked`);o[c.cat+i]=r?Number(r.value):0;})); return o; }
+function updateAuditTotal(){
+  const sc=readAuditScores(); AUDIT.forEach(c=>{const el=$('#a-cat-'+c.cat); if(el) el.textContent=catPct(sc,c)+'%';});
+  const v=Object.values(sc); const t=$('#a-total'); if(t) t.textContent=Math.round(v.reduce((a,b)=>a+b,0)/(v.length*2)*100)+'%';
+}
+function auditViewModal(id){
+  const a=S.data.Audits.find(x=>x.id===id); if(!a) return;
+  const sc=a.scores||{}, cm=a.comments||{};
+  openModal(`<div class="sh"><div><h2>Audit ครั้งที่ ${esc(a.round)} · ${esc(fname(a.fid))}</h2><div class="small muted">${fmtD(a.date)} · ${esc(a.auditor)}</div></div><button class="x" data-act="close" aria-label="ปิด">×</button></div>
+  <div class="sb">
+    <div class="row" style="gap:18px"><div><div class="small muted">คะแนนรวม</div><div class="score" style="color:var(--${scoreCls(a.total)})">${a.total}%</div></div>
+    <div style="flex:1;min-width:200px;display:grid;gap:8px">${AUDIT.map(c=>{const p=catPct(sc,c);return `<div><div class="row small" style="justify-content:space-between"><span>${c.label}</span><b class="num">${p}%</b></div>${bar(p)}</div>`;}).join('')}</div></div>
+    ${AUDIT.map(c=>`<div class="acat"><h3><span>${c.label}</span></h3>${c.items.map((it,i)=>{const v=Number(sc[c.cat+i]||0);return `<div class="aitem"><span>${esc(it)}${cm[c.cat+i]?`<div class="small muted">${esc(cm[c.cat+i])}</div>`:''}</span>${chip(SCORE_LBL[v],['bad','warn','ok'][v])}</div>`;}).join('')}</div>`).join('')}
+    ${a.notes?`<div><h3>สรุปผล</h3><p>${esc(a.notes)}</p></div>`:''}
+    ${a.followups?`<div class="card" style="background:var(--warn-soft);border-color:transparent"><h3>สิ่งที่ต้องแก้ไขและติดตาม</h3><p>${esc(a.followups)}</p></div>`:''}
+  </div>
+  ${isAdmin()?`<div class="sf"><button class="btn danger" data-act="del" data-sheet="Audits" data-id="${a.id}">ลบผล Audit นี้</button></div>`:''}`);
+}
+
+/* ---------- tickets ---------- */
+function ticketRow(t){
+  const st=TSTATUS[t.status]||TSTATUS.new;
+  return `<div class="li click" data-act="ticket-view" data-id="${t.id}"><div><div class="t">${esc(t.title)}</div><div class="small muted">${isAdmin()?esc(fname(t.fid))+' · ':''}${esc((TTYPES[t.type]||{}).label||t.type)} · ${fmtDT(t.createdAt)}</div></div>${chip(st[0],st[1])}</div>`;
+}
+function ticketsView(){
+  const all=[...S.data.Tickets].sort((a,b)=>String(b.updatedAt||b.createdAt).localeCompare(a.updatedAt||a.createdAt));
+  const list=all.filter(t=>S.filter==='all'?true:S.filter==='done'?t.status==='done':t.status!=='done');
+  const fl=[['open','ยังไม่ปิด'],['done','เสร็จสิ้น'],['all','ทั้งหมด']];
+  return `<div class="head"><div><h1>${isAdmin()?'คำขอจากสาขา':'คำขอของฉัน'}</h1><p class="muted">${isAdmin()?'ขอบุคลากร ปรึกษากฎหมาย/ธุรกิจ นัด Site Visit และแจ้งปัญหา':'ส่งเรื่องถึงสำนักงานใหญ่ CMNH และติดตามคำตอบได้ที่นี่'}</p></div>
+  <div class="row">${fl.map(([k,l])=>`<button class="btn sm ${S.filter===k?'pri':''}" data-act="tfilter" data-v="${k}">${l}</button>`).join('')}${!isAdmin()?'<button class="btn gold" data-act="ticket-form">+ ยื่นคำขอใหม่</button>':''}</div></div>
+  <section class="panel"><div class="pb list">${list.length?list.map(ticketRow).join(''):'<div class="empty">ไม่มีคำขอในหมวดนี้</div>'}</div></section>`;
+}
+function ticketForm(){
+  const f=S.data.Franchisees[0];
+  const types=Object.entries(TTYPES).filter(([,v])=>!v.pkg||v.pkg===f.pkg);
+  openModal(`<form data-form="ticket">
+    <div class="sh"><h2>ยื่นคำขอถึงสำนักงานใหญ่</h2><button type="button" class="x" data-act="close" aria-label="ปิด">×</button></div>
+    <div class="sb">
+      <label class="f">ประเภทคำขอ<select id="t-type">${types.map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}</select></label>
+      <label class="f">หัวข้อ<input type="text" id="t-title" required placeholder="เช่น ขอ NA เพิ่ม 1 คน กะดึก"></label>
+      <label class="f">รายละเอียด<textarea id="t-detail" placeholder="จำนวน วันที่ต้องการ หรือข้อมูลที่ทีมควรรู้"></textarea></label>
+    </div>
+    <div class="sf"><button type="button" class="btn" data-act="close">ยกเลิก</button><button class="btn gold" type="submit">ส่งคำขอ</button></div>
+  </form>`);
+}
+function ticketModal(id){
+  const t=S.data.Tickets.find(x=>x.id===id); if(!t) return;
+  const st=TSTATUS[t.status]||TSTATUS.new;
+  openModal(`<form data-form="reply" data-id="${t.id}">
+    <div class="sh"><div><h2>${esc(t.title)}</h2><div class="small muted">${esc(fname(t.fid))} · ${esc((TTYPES[t.type]||{}).label||t.type)}</div></div><button type="button" class="x" data-act="close" aria-label="ปิด">×</button></div>
+    <div class="sb">
+      <div class="row">${chip(st[0],st[1])}<span class="small muted">ส่งเมื่อ ${fmtDT(t.createdAt)}</span></div>
+      ${t.detail?`<div class="msg"><div class="who">${esc(fname(t.fid))}</div>${esc(t.detail)}</div>`:''}
+      ${(t.replies||[]).map(r=>`<div class="msg ${r.by==='hq'?'hq':''}"><div class="who">${esc(r.name)} · ${fmtDT(r.at)}</div>${esc(r.text)}</div>`).join('')}
+      <label class="f">ข้อความตอบกลับ<textarea id="r-text" ${isAdmin()?'':'required'}></textarea></label>
+      ${isAdmin()?`<label class="f">เปลี่ยนสถานะ<select id="r-status">${Object.entries(TSTATUS).map(([k,v])=>`<option value="${k}" ${k===t.status?'selected':''}>${v[0]}</option>`).join('')}</select></label>`:''}
+    </div>
+    <div class="sf">${isAdmin()?`<button type="button" class="btn danger" data-act="del" data-sheet="Tickets" data-id="${t.id}">ลบ</button>`:''}<button type="button" class="btn" data-act="close">ปิด</button><button class="btn pri" type="submit">${isAdmin()?'บันทึก':'ส่งข้อความ'}</button></div>
+  </form>`);
+}
+
+/* ---------- trainings ---------- */
+function trainingsView(){
+  const list=[...S.data.Trainings].sort((a,b)=>String(b.date).localeCompare(a.date));
+  const ppl=list.reduce((a,r)=>a+Number(r.attendees||0),0), hrs=list.reduce((a,r)=>a+Number(r.hours||0),0);
+  return `<div class="head"><div><h1>${isAdmin()?'บันทึกการอบรม UP-Skill':'ประวัติการอบรม'}</h1><p class="muted num">${list.length} ครั้ง · ผู้เข้าอบรมรวม ${ppl} คน · ${hrs} ชั่วโมง</p></div>${isAdmin()?'<button class="btn pri" data-act="training-form">+ บันทึกการอบรม</button>':''}</div>
+  <div class="panel only-mob"><div class="pb">${list.map(r=>`<div class="mcard" style="cursor:default">
+    <div class="top2"><div><div class="t">${esc(r.topic)}</div><div class="small muted">${fmtD(r.date)}${isAdmin()?' · '+esc(fname(r.fid)):''}</div></div>${isAdmin()?`<button class="btn sm danger" data-act="del" data-sheet="Trainings" data-id="${r.id}">ลบ</button>`:''}</div>
+    <div class="row" style="gap:4px">${(r.groups||[]).map(g=>chip(g,'nodot mute')).join('')}</div>
+    <div class="small num">${esc(r.attendees)} คน · ${esc(r.hours)} ชม. · ${esc(r.trainer)}</div>${r.note?`<div class="small muted">${esc(r.note)}</div>`:''}
+  </div>`).join('')||'<div class="empty">ยังไม่มีบันทึกการอบรม</div>'}</div></div>
+  <div class="panel only-desk"><div class="tbl"><table><thead><tr><th>วันที่</th>${isAdmin()?'<th>สาขา</th>':''}<th>หัวข้อ</th><th>กลุ่มเป้าหมาย</th><th>ผู้เข้าอบรม</th><th>ชม.</th><th>วิทยากร</th>${isAdmin()?'<th></th>':''}</tr></thead><tbody>
+  ${list.map(r=>`<tr><td class="num small">${fmtD(r.date)}</td>${isAdmin()?`<td>${esc(fname(r.fid))}</td>`:''}<td><b>${esc(r.topic)}</b>${r.note?`<div class="small muted">${esc(r.note)}</div>`:''}</td><td><div class="row" style="gap:4px">${(r.groups||[]).map(g=>chip(g,'nodot mute')).join('')}</div></td><td class="num">${esc(r.attendees)} คน</td><td class="num">${esc(r.hours)}</td><td class="small">${esc(r.trainer)}</td>${isAdmin()?`<td><button class="btn sm danger" data-act="del" data-sheet="Trainings" data-id="${r.id}">ลบ</button></td>`:''}</tr>`).join('')||`<tr><td colspan="8" class="empty">ยังไม่มีบันทึกการอบรม</td></tr>`}
+  </tbody></table></div></div>`;
+}
+function trainingForm(fid){
+  openModal(`<form data-form="training">
+    <div class="sh"><h2>บันทึกการอบรม (UP-Skill)</h2><button type="button" class="x" data-act="close" aria-label="ปิด">×</button></div>
+    <div class="sb">
+      <div class="grid2">
+        <label class="f">สาขา<select id="r-fid">${S.data.Franchisees.map(f=>`<option value="${f.id}" ${f.id===fid?'selected':''}>${esc(f.name)}</option>`).join('')}</select></label>
+        <label class="f">วันที่อบรม<input type="date" id="r-date" value="${today()}" required></label>
+      </div>
+      <label class="f">หัวข้อการอบรม<input type="text" id="r-topic" required></label>
+      <div class="f">กลุ่มเป้าหมาย<div class="row">${GROUPS.map((g,i)=>`<label class="chip nodot mute" style="cursor:pointer"><input type="checkbox" id="g-${i}" value="${g}"> ${g}</label>`).join('')}</div></div>
+      <div class="grid2">
+        <label class="f">จำนวนผู้เข้าอบรม (คน)<input type="number" id="r-att" min="0" value="0"></label>
+        <label class="f">จำนวนชั่วโมง<input type="number" id="r-hrs" min="0" step="0.5" value="3"></label>
+        <label class="f">วิทยากร<input type="text" id="r-trainer" value="พว.ทีม CMNH"></label>
+      </div>
+      <label class="f">หมายเหตุ<input type="text" id="r-note"></label>
+    </div>
+    <div class="sf"><button type="button" class="btn" data-act="close">ยกเลิก</button><button class="btn pri" type="submit">บันทึก</button></div>
+  </form>`);
+}
+
+/* ---------- documents ---------- */
+function docsView(){
+  const docs=S.data.Documents;
+  const cats=[...new Set([...DOC_CATS,...docs.map(d=>d.cat)])].filter(c=>docs.some(d=>d.cat===c));
+  return `<div class="head"><div><h1>${isAdmin()?'คลังเอกสารและแบบฟอร์ม':'เอกสารและแบบฟอร์ม'}</h1><p class="muted">${docs.length} รายการ · ลิงก์ไปยังไฟล์ใน Google Drive</p></div>${isAdmin()?'<button class="btn pri" data-act="doc-form">+ เพิ่มเอกสาร</button>':''}</div>
+  ${cats.length?`<div class="cols">${cats.map(c=>`<section class="panel"><div class="ph"><h2>${esc(c)}</h2></div><div class="pb list">${docs.filter(d=>d.cat===c).map(d=>`
+    <div class="li"><div><div class="t">${esc(d.title)}</div><div class="small muted">${d.desc?esc(d.desc)+' · ':''}${d.pkgs==='ALL'?'ทุกแพ็กเกจ':'เฉพาะ '+esc(String(d.pkgs).split(',').map(k=>(PKG[k]||{}).name||k).join(', '))}</div></div>
+    <div class="row" style="justify-content:flex-end;flex:none">${d.url?`<a class="btn sm" href="${esc(d.url)}" target="_blank" rel="noopener">เปิด</a>`:'<span class="small muted">ยังไม่มีลิงก์</span>'}${isAdmin()?`<button class="btn sm" data-act="doc-form" data-id="${d.id}">แก้ไข</button>`:''}</div></div>`).join('')}</div></section>`).join('')}</div>`:'<div class="card empty">ยังไม่มีเอกสาร</div>'}`;
+}
+function docForm(id){
+  const d=id?S.data.Documents.find(x=>x.id===id):{id:'',title:'',cat:DOC_CATS[0],url:'',pkgs:'ALL',desc:''};
+  openModal(`<form data-form="doc" data-id="${esc(d.id)}">
+    <div class="sh"><h2>${id?'แก้ไขเอกสาร':'เพิ่มเอกสาร'}</h2><button type="button" class="x" data-act="close" aria-label="ปิด">×</button></div>
+    <div class="sb">
+      <label class="f">ชื่อเอกสาร<input type="text" id="d-title" value="${esc(d.title)}" required></label>
+      <div class="grid2">
+        <label class="f">หมวด<select id="d-cat">${DOC_CATS.map(c=>`<option ${c===d.cat?'selected':''}>${c}</option>`).join('')}</select></label>
+        <label class="f">เห็นได้โดย<select id="d-pkgs"><option value="ALL" ${d.pkgs==='ALL'?'selected':''}>ทุกแพ็กเกจ</option>${Object.values(PKG).map(p=>`<option value="${p.code}" ${d.pkgs===p.code?'selected':''}>เฉพาะ ${p.name}</option>`).join('')}</select></label>
+      </div>
+      <label class="f">ลิงก์ Google Drive<input type="url" id="d-url" value="${esc(d.url)}" placeholder="https://drive.google.com/..."></label>
+      <label class="f">คำอธิบาย<input type="text" id="d-desc" value="${esc(d.desc)}"></label>
+      <p class="small muted">ตั้งค่าการแชร์ไฟล์ใน Drive เป็น "ทุกคนที่มีลิงก์ดูได้" เพื่อให้สาขาเปิดได้</p>
+    </div>
+    <div class="sf">${id?`<button type="button" class="btn danger" data-act="del" data-sheet="Documents" data-id="${d.id}">ลบ</button>`:''}<button type="button" class="btn" data-act="close">ยกเลิก</button><button class="btn pri" type="submit">บันทึก</button></div>
+  </form>`);
+}
+
+/* ---------- finance ---------- */
+function payState(p){
+  const due=Number(p.amount||0), paid=Number(p.paidAmount||0);
+  if(paid>=due&&due>0) return {key:'paid',lbl:'ชำระแล้ว',cls:'ok',late:0};
+  const late=dayDiff(p.due,today());
+  if(late>30) return {key:'over30',lbl:`เกินกำหนด ${late} วัน`,cls:'bad',late};
+  if(late>0) return {key:'late',lbl:`เกินกำหนด ${late} วัน`,cls:'warn',late};
+  if(late>=-14) return {key:'soon',lbl:late===0?'ครบกำหนดวันนี้':`ครบกำหนดใน ${-late} วัน`,cls:'warn',late};
+  return {key:'pending',lbl:'ยังไม่ถึงกำหนด',cls:'mute',late};
+}
+const paysOf = fid => S.data.Payments.filter(p=>p.fid===fid).sort((a,b)=>String(a.due).localeCompare(b.due));
+function finSummary(list){
+  const total=list.reduce((a,p)=>a+Number(p.amount||0),0), paid=list.reduce((a,p)=>a+Math.min(Number(p.paidAmount||0),Number(p.amount||0)),0);
+  const overdue=list.filter(p=>['late','over30'].includes(payState(p).key)).reduce((a,p)=>a+Number(p.amount||0)-Number(p.paidAmount||0),0);
+  return {total,paid,out:total-paid,overdue,hold:list.some(p=>payState(p).key==='over30')};
+}
+function payTable(list,showBranch){
+  if(!list.length) return '<div class="empty">ยังไม่มีงวดชำระ</div>';
+  return `<div class="list">${list.map(p=>{const st=payState(p);return `<div class="li payrow"><div>
+    <div class="t">${showBranch?esc(fname(p.fid))+' · ':''}${esc(p.label)}</div>
+    <div class="small muted num">ครบกำหนด ${fmtD(p.due)} · ${money(p.amount)} บาท${st.key==='paid'?' · ชำระ '+fmtD(p.paidDate):''}</div></div>
+    <div class="row" style="justify-content:flex-end">${chip(st.lbl,st.cls)}${isAdmin()&&st.key!=='paid'?`<button class="btn sm" data-act="pay" data-id="${p.id}">บันทึกรับเงิน</button>`:''}</div></div>`;}).join('')}</div>`;
+}
+function financeView(){
+  const all=[...S.data.Payments], sm=finSummary(all);
+  const open=all.filter(p=>payState(p).key!=='paid').sort((a,b)=>String(a.due).localeCompare(b.due));
+  const fs=S.data.Franchisees;
+  return `<div class="head"><div><h1>การเงินและงวดชำระ</h1><p class="muted">ค่าแพ็กเกจแบ่ง 3 งวด 50/30/20 และค่าต่ออายุรายปี ตามนโยบาย HQ-POL-01</p></div></div>
+  <div class="kpis">
+    <div class="card kpi"><div class="l">มูลค่าที่ต้องเก็บทั้งหมด</div><div class="v">${money(sm.total)} <span class="small muted">บาท</span></div></div>
+    <div class="card kpi"><div class="l">รับชำระแล้ว</div><div class="v" style="color:var(--ok)">${money(sm.paid)}</div>${bar(sm.total?sm.paid/sm.total*100:0)}</div>
+    <div class="card kpi"><div class="l">ยอดคงค้าง</div><div class="v">${money(sm.out)}</div></div>
+    <div class="card kpi"><div class="l">เกินกำหนดชำระ</div><div class="v" style="color:var(--${sm.overdue?'bad':'ok'})">${money(sm.overdue)}</div></div>
+  </div>
+  <div class="cols">
+    <section class="panel"><div class="ph"><h2>งวดที่ยังไม่ได้รับ</h2></div><div class="pb">${open.length?payTable(open,true):'<div class="empty">รับชำระครบทุกงวดแล้ว</div>'}</div></section>
+    <section class="panel"><div class="ph"><h2>สรุปรายสาขา</h2></div><div class="pb list">${fs.map(f=>{const x=finSummary(paysOf(f.id));return `<div class="li click" data-act="open-branch" data-id="${f.id}"><div style="flex:1">
+      <div class="row" style="justify-content:space-between"><span class="t">${esc(f.name)}</span>${x.hold?chip('ค้างเกิน 30 วัน: หยุดสิทธิ์ที่ยังไม่ส่งมอบ','bad'):x.out?chip(`คงค้าง ${money(x.out)}`,'warn'):chip('ครบแล้ว','ok')}</div>
+      <div class="small muted num">${PKG[f.pkg].name} · รับแล้ว ${money(x.paid)} จาก ${money(x.total)} บาท</div>
+      <div style="margin-top:6px">${bar(x.total?x.paid/x.total*100:0)}</div></div></div>`;}).join('')||'<div class="empty">ยังไม่มีสาขา</div>'}</div></section>
+  </div>
+  <p class="small muted" style="margin-top:10px">ค้างชำระเกิน 30 วัน สำนักงานใหญ่หยุดให้สิทธิ์ที่ยังไม่ได้ส่งมอบ เกิน 60 วัน พิจารณาเลิกสัญญาได้ ราคายังไม่รวมภาษีมูลค่าเพิ่ม</p>`;
+}
+function paymentModal(id){
+  const p=S.data.Payments.find(x=>x.id===id); if(!p) return;
+  openModal(`<form data-form="payment" data-id="${p.id}">
+    <div class="sh"><div><h2>บันทึกรับชำระเงิน</h2><div class="small muted">${esc(fname(p.fid))} · ${esc(p.label)}</div></div><button type="button" class="x" data-act="close" aria-label="ปิด">×</button></div>
+    <div class="sb"><div class="grid2">
+      <label class="f">วันที่รับเงิน<input type="date" id="pay-date" value="${today()}" required></label>
+      <label class="f">จำนวนเงิน (บาท)<input type="number" id="pay-amt" min="0" value="${Number(p.amount)-Number(p.paidAmount||0)}" required></label></div>
+      <label class="f">หมายเหตุ / เลขที่ใบเสร็จ<input type="text" id="pay-note" value="${esc(p.note)}"></label>
+      <p class="small muted">ยอดตามงวด ${money(p.amount)} บาท ครบกำหนด ${fmtD(p.due)}</p></div>
+    <div class="sf"><button type="button" class="btn" data-act="close">ยกเลิก</button><button class="btn pri" type="submit">บันทึกรับเงิน</button></div>
+  </form>`);
+}
+function addRenewal(f){
+  const n=paysOf(f.id).filter(p=>p.inst==='renew').length+1;
+  return {id:`p_${f.id}_renew${n}`,fid:f.id,inst:'renew',label:`ค่าต่ออายุปีที่ ${n+1}`,due:f.end,amount:PKG[f.pkg].renew,paidDate:'',paidAmount:0,note:''};
+}
+
+/* ---------- packages ---------- */
+function packagesView(){
+  return `<div class="head"><div><h1>แพ็กเกจแฟรนไชส์</h1><p class="muted">สิทธิประโยชน์ที่ระบบใช้ติดตามในแต่ละสาขา</p></div></div>
+  <div class="cols">${Object.values(PKG).map(p=>`<section class="card pkgcard">
+    <div class="row" style="justify-content:space-between"><h2>${p.full}</h2>${p.beds?chip(p.beds+' เตียง','gold nodot'):''}</div>
+    <div><span class="price num">${money(p.price)}</span> บาท · อายุสัญญา 1 ปี</div>
+    <ol>${p.benefits.map(b=>`<li>${esc(b.title)}${b.sub?` <span class="muted small">— ${esc(b.sub)}</span>`:''}</li>`).join('')}</ol>
+    <p class="small muted">${AUDIT_NOTE}</p></section>`).join('')}</div>`;
+}
+
+/* ---------- franchisee home ---------- */
+function frHome(f){
+  const P=PKG[f.pkg];
+  const open=S.data.Tickets.filter(t=>t.status!=='done');
+  const last=[...S.data.Audits].sort((a,b)=>String(b.date).localeCompare(a.date))[0];
+  return `<div class="head"><div><h1>${esc(f.name)}</h1><p class="muted">${P.full}</p></div><button class="btn gold" data-act="ticket-form">+ ยื่นคำขอ</button></div>
+  ${contractStrip(f)}
+  <div class="kpis" style="margin-top:16px">
+    <div class="card kpi"><div class="l">การส่งมอบระบบ</div><div class="v">${progress(f)}%</div>${bar(progress(f))}</div>
+    <div class="card kpi"><div class="l">ผล Audit ล่าสุด</div><div class="v" style="color:var(--${last?scoreCls(last.total):'muted'})">${last?last.total+'%':'-'}</div><div class="small muted">${last?fmtD(last.date):'ยังไม่มีการตรวจ'}</div></div>
+    <div class="card kpi"><div class="l">คำขอที่รอคำตอบ</div><div class="v">${open.length}</div></div>
+  </div>
+  <section class="panel" style="margin-bottom:16px"><div class="ph"><h2>งวดชำระค่าแพ็กเกจ</h2>${(()=>{const x=finSummary(paysOf(f.id));return x.hold?chip('ค้างเกิน 30 วัน สิทธิ์ที่ยังไม่ส่งมอบถูกพักไว้','bad'):x.out?chip(`คงค้าง ${money(x.out)} บาท`,'warn'):chip('ชำระครบแล้ว','ok');})()}</div><div class="pb">${payTable(paysOf(f.id),false)}</div></section>
+  <h2 style="margin:6px 0 10px">สิทธิประโยชน์ของคุณ</h2>
+  <div class="bens">${P.benefits.map((b,i)=>benefitCard(f,b,i,false)).join('')}</div>
+  <p class="small muted" style="margin-top:8px">${AUDIT_NOTE}</p>`;
+}
+
+/* ---------- modal ---------- */
+function openModal(html){ const m=$('#modal'); m.innerHTML=`<div class="sheet" role="dialog" aria-modal="true">${html}</div>`; m.hidden=false; const fi=m.querySelector('input:not([type=radio]),select,textarea'); if(fi) setTimeout(()=>fi.focus(),30); }
+function closeModal(){ const m=$('#modal'); m.hidden=true; m.innerHTML=''; }
+let confirmDel=null;
+
+/* ---------- events ---------- */
+document.addEventListener('click',async e=>{
+  if(e.target.id==='modal'){ closeModal(); return; }
+  const el=e.target.closest('[data-act]'); if(!el||el.tagName==='SELECT') return;
+  const a=el.dataset.act, id=el.dataset.id;
+  try{
+    if(a==='nav'){ S.view=el.dataset.v; S.detail=null; closeModal(); render(); window.scrollTo(0,0); }
+    else if(a==='more') moreSheet();
+    else if(a==='pay') paymentModal(id);
+    else if(a==='add-renew'){ const f=F(el.dataset.fid); await save('Payments',addRenewal(f)); render(); toast('เพิ่มงวดค่าต่ออายุแล้ว'); }
+    else if(a==='logout'){ ls.del('cmnh_fr_session'); S.me=null; S.auth=null; render(); }
+    else if(a==='reset-demo'){ ls.del(DEMO_KEY); MEM_DB=null; await load(); render(); toast('รีเซ็ตข้อมูลตัวอย่างแล้ว'); }
+    else if(a==='open-branch'){ S.view='branches'; S.detail=id; render(); window.scrollTo(0,0); }
+    else if(a==='back'){ S.detail=null; render(); }
+    else if(a==='close'){ closeModal(); }
+    else if(a==='branch-form') branchForm(id);
+    else if(a==='audit-form') auditForm(el.dataset.fid);
+    else if(a==='audit-view') auditViewModal(id);
+    else if(a==='training-form') trainingForm(el.dataset.fid);
+    else if(a==='doc-form') docForm(id);
+    else if(a==='ticket-form') ticketForm();
+    else if(a==='ticket-view') ticketModal(id);
+    else if(a==='tfilter'){ S.filter=el.dataset.v; render(); }
+    else if(a==='log-form'){
+      const f=F(el.dataset.fid), b=PKG[f.pkg].benefits.find(x=>x.key===el.dataset.key);
+      openModal(`<form data-form="log" data-fid="${f.id}" data-key="${b.key}"><div class="sh"><h2>บันทึกการใช้สิทธิ์</h2><button type="button" class="x" data-act="close" aria-label="ปิด">×</button></div>
+      <div class="sb"><p><b>${esc(b.title)}</b> · ${esc(f.name)}</p><label class="f">วันที่<input type="date" id="l-date" value="${today()}" required></label><label class="f">รายละเอียด<input type="text" id="l-note" required placeholder="เช่น ตรวจหน้างานและประชุมทีม"></label></div>
+      <div class="sf"><button type="button" class="btn" data-act="close">ยกเลิก</button><button class="btn pri" type="submit">บันทึก</button></div></form>`);
+    }
+    else if(a==='del'){
+      if(confirmDel!==el){ confirmDel=el; el.textContent='กดอีกครั้งเพื่อยืนยันการลบ'; return; }
+      confirmDel=null; const sheet=el.dataset.sheet;
+      await removeRec(sheet,id);
+      if(sheet==='Franchisees'){ S.detail=null; }
+      closeModal(); render(); toast('ลบแล้ว');
+    }
+  }catch(err){ toast(err.message); }
+});
+document.addEventListener('change',async e=>{
+  const el=e.target;
+  if(el.matches('[data-act="set-status"]')){
+    const fid=el.dataset.fid,key=el.dataset.key;
+    try{ await save('Status',{id:fid+'_'+key,fid,key,status:Number(el.value),updatedAt:new Date().toISOString()}); render(); toast('บันทึกสถานะแล้ว'); }catch(err){ toast(err.message); }
+  }
+  if(el.closest('[data-form="audit"]')&&el.type==='radio') updateAuditTotal();
+});
+document.addEventListener('submit',async e=>{
+  const form=e.target.closest('form[data-form]'); if(!form) return; e.preventDefault();
+  const k=form.dataset.form, v=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  const btn=form.querySelector('[type=submit]'); if(btn) btn.disabled=true;
+  try{
+    if(k==='login-admin') await doLogin({role:'admin',pin:v('pin')},'#err-admin');
+    else if(k==='login-fr') await doLogin({role:'fr',code:v('code').toUpperCase()},'#err-fr');
+    else if(k==='branch'){
+      const id=form.dataset.id, old=id?F(id):null, start=v('b-start');
+      let code=v('b-code').toUpperCase(); if(!code) code=(v('b-province').slice(0,2)||'FR')+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+      if(S.data.Franchisees.some(f=>f.code===code&&f.id!==id)) throw new Error('รหัสเข้าระบบนี้ถูกใช้แล้ว');
+      const rec={...(old||{}),id:id||uid('f'),code,name:v('b-name'),owner:v('b-owner'),phone:v('b-phone'),province:v('b-province'),pkg:v('b-pkg'),beds:Number(v('b-beds'))||'',start,end:addMonths(start,12),note:v('b-note')};
+      await save('Franchisees',rec);
+      if(!id){ for(const p of installments(rec)) await save('Payments',p); }
+      closeModal(); S.view='branches'; S.detail=rec.id; render(); toast(`บันทึกแล้ว · รหัสเข้าระบบ ${code}`);
+    }
+    else if(k==='audit'){
+      const fid=v('a-fid'), scores=readAuditScores(), comments={};
+      Object.keys(scores).forEach(key=>{const c=v('cm-'+key); if(c) comments[key]=c;});
+      const vals=Object.values(scores), total=Math.round(vals.reduce((a,b)=>a+b,0)/(vals.length*2)*100);
+      const round=S.data.Audits.filter(a=>a.fid===fid).length+1;
+      await save('Audits',{id:uid('a'),fid,date:v('a-date'),auditor:v('a-auditor'),round,scores,comments,total,notes:v('a-notes'),followups:v('a-follow'),createdAt:new Date().toISOString()});
+      closeModal(); render(); toast(`บันทึก Audit ครั้งที่ ${round} แล้ว (${total}%)`);
+    }
+    else if(k==='training'){
+      const groups=GROUPS.filter((_,i)=>document.getElementById('g-'+i).checked);
+      await save('Trainings',{id:uid('r'),fid:v('r-fid'),date:v('r-date'),topic:v('r-topic'),groups,attendees:Number(v('r-att'))||0,hours:Number(v('r-hrs'))||0,trainer:v('r-trainer'),note:v('r-note'),createdAt:new Date().toISOString()});
+      closeModal(); render(); toast('บันทึกการอบรมแล้ว');
+    }
+    else if(k==='doc'){
+      const id=form.dataset.id;
+      await save('Documents',{id:id||uid('d'),title:v('d-title'),cat:v('d-cat'),pkgs:v('d-pkgs'),url:v('d-url'),desc:v('d-desc'),createdAt:new Date().toISOString()});
+      closeModal(); render(); toast('บันทึกเอกสารแล้ว');
+    }
+    else if(k==='log'){
+      await save('Logs',{id:uid('l'),fid:form.dataset.fid,key:form.dataset.key,date:v('l-date'),note:v('l-note'),by:'ทีม CMNH',createdAt:new Date().toISOString()});
+      closeModal(); render(); toast('บันทึกการใช้สิทธิ์แล้ว');
+    }
+    else if(k==='payment'){
+      const p=S.data.Payments.find(x=>x.id===form.dataset.id);
+      await save('Payments',{...p,paidDate:v('pay-date'),paidAmount:Number(p.paidAmount||0)+Number(v('pay-amt')||0),note:v('pay-note')});
+      closeModal(); render(); toast('บันทึกรับชำระเงินแล้ว');
+    }
+    else if(k==='ticket'){
+      const now=new Date().toISOString();
+      await save('Tickets',{id:uid('t'),fid:S.me.fid,type:v('t-type'),title:v('t-title'),detail:v('t-detail'),status:'new',replies:[],createdAt:now,updatedAt:now});
+      closeModal(); S.filter='open'; render(); toast('ส่งคำขอถึงสำนักงานใหญ่แล้ว');
+    }
+    else if(k==='reply'){
+      const id=form.dataset.id, text=v('r-text'), status=isAdmin()?v('r-status'):'';
+      const t=S.data.Tickets.find(x=>x.id===id);
+      if(!text&&(!status||status===t.status)) throw new Error('พิมพ์ข้อความหรือเปลี่ยนสถานะก่อนบันทึก');
+      const upd=await api('reply',{id,text,status});
+      Object.assign(t,upd); closeModal(); render(); toast('บันทึกแล้ว');
+    }
+  }catch(err){ toast(err.message); }
+  finally{ if(btn&&btn.isConnected) btn.disabled=false; }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#modal').hidden) closeModal(); });
+
+/* ---------- boot ---------- */
+(async function(){
+  const sess=ls.get('cmnh_fr_session');
+  if(sess&&sess.auth){ try{ S.auth=sess.auth; S.me=await api('login'); S.view=S.me.role==='admin'?'dash':'home'; await load(); }catch(e){ S.me=null; S.auth=null; ls.del('cmnh_fr_session'); } }
+  render();
+})();
+</script>
+</body>
+</html>
